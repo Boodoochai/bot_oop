@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.UUID;
 
 class ClientIdentificationHandler {
@@ -14,6 +15,7 @@ class ClientIdentificationHandler {
     }
 
     public static Client getClient(IDataStorage dataStorage, String name) {
+        Objects.requireNonNull(name, "name cannot be null");
         if (!dataStorage.isExistClientByName(name)) {
             registerNewClient(dataStorage, name);
         }
@@ -21,6 +23,7 @@ class ClientIdentificationHandler {
     }
 
     public static Client getClient(IDataStorage dataStorage, UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
         if (!dataStorage.isExistClientById(uuid)) {
             registerNewClient(dataStorage, uuid);
         }
