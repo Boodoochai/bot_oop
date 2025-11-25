@@ -4,7 +4,7 @@ public class App {
 
         IRequestHandler requestHandler = new DemoRequestHandler();
 
-        ITalker talker = new ConsoleTalker(dataStorage, requestHandler);
+        AbstractTalker talker = new ConsoleTalker(dataStorage, requestHandler);
 
         talker.run();
     }

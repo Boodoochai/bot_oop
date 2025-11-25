@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-class ConsoleTalker extends ITalker {
+class ConsoleTalker extends AbstractTalker {
     ConsoleTalker(IDataStorage dataStorage, IRequestHandler requestHandler) {
         super(dataStorage, requestHandler);
     }

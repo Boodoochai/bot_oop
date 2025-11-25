@@ -1,8 +1,8 @@
-abstract class ITalker {
+abstract class AbstractTalker {
     protected final IDataStorage dataStorage;
     protected final IRequestHandler requestHandler;
 
-    ITalker(final IDataStorage dataStorage, final IRequestHandler requestHandler) {
+    AbstractTalker(final IDataStorage dataStorage, final IRequestHandler requestHandler) {
         this.dataStorage = dataStorage;
         this.requestHandler = requestHandler;
     }
