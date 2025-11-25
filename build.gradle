@@ -19,12 +19,19 @@ repositories {
     jcenter()
 }
 
+tasks.named('run') {
+    standardInput = System.in
+}
+
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
+
+    // UUID
+    implementation 'com.fasterxml.uuid:java-uuid-generator:4.0.1'
 }
 
 // Define the main class for the application
