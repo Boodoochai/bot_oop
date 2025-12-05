@@ -8,6 +8,7 @@ final public class DemoRequestHandler implements IRequestHandler{
         this.dataStorage = dataStorage;
     }
     public @NonNull Response handleRequest(final @NonNull Request request) {
-        return new Response("heh");
+        @NonNull final String res = request.getRequestOwner().getUUID().toString();
+        return new Response(res);
     }
 }

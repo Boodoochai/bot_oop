@@ -2,7 +2,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 
-final class ClientIdentificationHandler {
+final public class ClientIdentificationHandler {
     private @NonNull final IDataStorage dataStorage;
     public ClientIdentificationHandler(@NonNull final IDataStorage dataStorage) {
         this.dataStorage = dataStorage;
