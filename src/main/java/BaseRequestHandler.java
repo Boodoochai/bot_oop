@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class BaseRequestHandler extends IRequestHandler {
+public final class BaseRequestHandler extends IRequestHandler {
     private final Map<UUID, CalendarAutomaton> machines = new HashMap<>();
 
     public BaseRequestHandler(@NonNull IDataStorage dataStorage,

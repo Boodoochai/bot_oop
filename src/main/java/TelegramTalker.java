@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 
-public class TelegramTalker extends AbstractTalker {
+public final class TelegramTalker extends AbstractTalker {
 
     private final TelegramBot bot;
     private int offset = 0;
