@@ -251,7 +251,13 @@ public class CalendarAutomaton {
         for (Client c : m.getParticipants()) {
             if (!first) sb.append(", ");
             first = false;
-            sb.append(c.getUUID());
+
+            String name = c.getName();
+            if (name.isBlank()) {
+                sb.append(c.getUUID());
+            } else {
+                sb.append(name);
+            }
         }
         return sb.toString();
     }

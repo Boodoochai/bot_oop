@@ -9,12 +9,12 @@ final public class ClientIdentificationHandler {
     }
     private void registerNewClient(@NonNull final String name) {
         @NonNull final UUID newClientUUID = UUID.randomUUID();
-        @NonNull final Client newClient = new Client(newClientUUID);
+        @NonNull final Client newClient = new Client(newClientUUID, name);
         dataStorage.putClientByName(name, newClient);
     }
 
     private void registerNewClient(@NonNull final UUID uuid) {
-        @NonNull final Client newClient = new Client(uuid);
+        @NonNull final Client newClient = new Client(uuid, "");
         dataStorage.putClientById(uuid, newClient);
     }
 
