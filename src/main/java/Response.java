@@ -1,11 +1,13 @@
-final public class Response {
-    private final String text;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-    Response(final String text) {
+final public class Response {
+    private @NonNull final String text;
+
+    Response(@NonNull final String text) {
         this.text = text;
     }
 
-    public String getText() {
+    public @NonNull String getText() {
         return this.text;
     }
 }

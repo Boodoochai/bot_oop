@@ -1,4 +1,5 @@
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 final public class App {
     private @NonNull final AbstractTalker talker;
@@ -7,7 +8,7 @@ final public class App {
         this.talker = talker;
     }
 
-    public static void main(String[] args) {
+    public static void main(@NotNull String[] args) {
         @NonNull final IDataStorage dataStorage = new SimpleDataStorage();
 
         @NonNull final ClientIdentificationHandler clientIdentificationHandler = new ClientIdentificationHandler(dataStorage);
