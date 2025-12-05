@@ -3,12 +3,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Scanner;
 
 final class ConsoleTalker extends AbstractTalker {
-    ConsoleTalker(@NonNull final IDataStorage dataStorage, @NonNull final IRequestHandler requestHandler) {
-        super(dataStorage, requestHandler);
+    ConsoleTalker(@NonNull final ClientIdentificationHandler clientIdentificationHandler, @NonNull final IRequestHandler requestHandler) {
+        super(clientIdentificationHandler, requestHandler);
     }
 
     private @NonNull Request genRequest(@NonNull final String requestOwnerName, @NonNull final String requestString) {
-        @NonNull final Client requestOwner = ClientIdentificationHandler.getClient(dataStorage, requestOwnerName);
+        @NonNull final Client requestOwner = clientIdentificationHandler.getClient(requestOwnerName);
         return new Request(requestOwner, requestString);
     }
 

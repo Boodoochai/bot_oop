@@ -49,7 +49,8 @@ final public class SimpleDataStorage implements IDataStorage {
         meetings.add(meeting);
     }
 
-    @Override public @NonNull List<Meeting> getMeetingsBetween(
+    @Override
+    public @NonNull List<Meeting> getMeetingsBetween(
             @NonNull final LocalDateTime from,
             @NonNull final LocalDateTime to
     ) {

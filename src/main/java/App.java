@@ -9,8 +9,9 @@ final public class App {
 
     public static void main(String[] args) {
         @NonNull final IDataStorage dataStorage = new SimpleDataStorage();
-        @NonNull final IRequestHandler requestHandler = new BaseRequestHandler(dataStorage);
-        @NonNull final AbstractTalker talker = new ConsoleTalker(dataStorage, requestHandler);
+        @NonNull final IRequestHandler requestHandler = new DemoRequestHandler(dataStorage);
+        @NonNull final ClientIdentificationHandler clientIdentificationHandler = new ClientIdentificationHandler(dataStorage);
+        @NonNull final AbstractTalker talker = new ConsoleTalker(clientIdentificationHandler, requestHandler);
         @NonNull final App app = new App(talker);
         app.run();
     }

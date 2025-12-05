@@ -1,11 +1,11 @@
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 abstract class AbstractTalker {
-    protected @NonNull final IDataStorage dataStorage;
+    protected @NonNull final ClientIdentificationHandler clientIdentificationHandler;
     protected @NonNull final IRequestHandler requestHandler;
 
-    AbstractTalker(@NonNull final IDataStorage dataStorage, @NonNull final IRequestHandler requestHandler) {
-        this.dataStorage = dataStorage;
+    AbstractTalker(@NonNull final ClientIdentificationHandler clientIdentificationHandler, @NonNull final IRequestHandler requestHandler) {
+        this.clientIdentificationHandler = clientIdentificationHandler;
         this.requestHandler = requestHandler;
     }
 
