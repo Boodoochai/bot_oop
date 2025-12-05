@@ -4,7 +4,11 @@
 
 #### To run use:
 ```
-./gradlew run -q --console=plain
+./gradlew run --args="base console" -q --console=plain
+```
+or
+```
+./gradlew run --args="base telegram"
 ```
 
 ---
