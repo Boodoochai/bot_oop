@@ -14,6 +14,7 @@ final public class App {
 
         if (args.length < 2) {
             System.out.println("Not enough arguments 2 expected");
+            return;
         }
 
         @NonNull final IRequestHandler requestHandler;
