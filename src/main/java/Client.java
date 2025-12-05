@@ -1,13 +1,15 @@
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.UUID;
 
-public class Client {
-    private final UUID clientId;
+final public class Client {
+    private @NonNull final UUID clientId;
 
-    Client(UUID uuid) {
+    Client(@NonNull final UUID uuid) {
         clientId = uuid;
     }
 
-    public UUID getUUID() {
+    public @NonNull UUID getUUID() {
         return clientId;
     }
 }

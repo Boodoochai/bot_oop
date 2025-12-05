@@ -1,17 +1,19 @@
-public class Request {
-    private final Client requestOwner;
-    private final String text;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-    Request(final Client requestOwner, final String requestText) {
+final public class Request {
+    private @NonNull final Client requestOwner;
+    private @NonNull final String text;
+
+    Request(@NonNull final Client requestOwner, @NonNull final String requestText) {
         this.requestOwner = requestOwner;
         this.text = requestText;
     }
 
-    public Client getRequestOwner() {
+    public @NonNull Client getRequestOwner() {
         return requestOwner;
     }
 
-    public String getText() {
+    public @NonNull String getText() {
         return text;
     }
 }

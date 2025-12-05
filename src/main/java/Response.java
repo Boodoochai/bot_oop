@@ -1,4 +1,4 @@
-public class Response {
+final public class Response {
     private final String text;
 
     Response(final String text) {

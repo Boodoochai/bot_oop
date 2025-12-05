@@ -78,16 +78,6 @@ class ClientIdentificationHandlerTest {
         assertSame(c1, c2);
     }
 
-    // TEST: NULL NAME HANDLING
-    @Test
-    @DisplayName("Если name = null, ожидаем NullPointerException")
-    void getClientByName_nullName() {
-        IDataStorage storage = mock(IDataStorage.class);
-
-        assertThrows(NullPointerException.class,
-                () -> ClientIdentificationHandler.getClient(storage, (String) null));
-    }
-
     // TEST: CREATE NEW BY UUID
     @Test
     @DisplayName("Создание нового клиента по UUID, если его нет")
@@ -135,7 +125,6 @@ class ClientIdentificationHandlerTest {
         verify(storage, never()).putClientById(any(UUID.class), any());
     }
 
-
     // TEST: SAME CLIENT ON REPEATED CALL (UUID)
     @Test
     @DisplayName("Повторный вызов getClient(uuid) возвращает того же клиента")
@@ -159,16 +148,5 @@ class ClientIdentificationHandlerTest {
         Client c2 = ClientIdentificationHandler.getClient(storage, id);
 
         assertSame(c1, c2);
-    }
-
-
-    // TEST: NULL UUID
-    @Test
-    @DisplayName("Если uuid = null, ожидаем NullPointerException")
-    void getClientByUUID_nullUUID() {
-        IDataStorage storage = mock(IDataStorage.class);
-
-        assertThrows(NullPointerException.class,
-                () -> ClientIdentificationHandler.getClient(storage, (UUID) null));
     }
 }

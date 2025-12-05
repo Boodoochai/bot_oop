@@ -1,29 +1,28 @@
-import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.UUID;
 
-class ClientIdentificationHandler {
+final class ClientIdentificationHandler {
     private ClientIdentificationHandler(){}
-    private static void registerNewClient(IDataStorage dataStorage, String name) {
-        UUID newClientUUID = UUID.randomUUID();
-        Client newClient = new Client(newClientUUID);
+    private static void registerNewClient(@NonNull final IDataStorage dataStorage, @NonNull final String name) {
+        @NonNull final UUID newClientUUID = UUID.randomUUID();
+        @NonNull final Client newClient = new Client(newClientUUID);
         dataStorage.putClientByName(name, newClient);
     }
 
-    private static void registerNewClient(IDataStorage dataStorage, UUID uuid) {
-        Client newClient = new Client(uuid);
+    private static void registerNewClient(@NonNull final IDataStorage dataStorage, @NonNull final UUID uuid) {
+        @NonNull final Client newClient = new Client(uuid);
         dataStorage.putClientById(uuid, newClient);
     }
 
-    public static Client getClient(IDataStorage dataStorage, String name) {
-        Objects.requireNonNull(name, "name cannot be null");
+    public static @NonNull Client getClient(@NonNull final IDataStorage dataStorage, @NonNull final String name) {
         if (!dataStorage.isExistClientByName(name)) {
             registerNewClient(dataStorage, name);
         }
         return dataStorage.clientByName(name);
     }
 
-    public static Client getClient(IDataStorage dataStorage, UUID uuid) {
-        Objects.requireNonNull(uuid, "uuid cannot be null");
+    public static @NonNull Client getClient(@NonNull final IDataStorage dataStorage, @NonNull final UUID uuid) {
         if (!dataStorage.isExistClientById(uuid)) {
             registerNewClient(dataStorage, uuid);
         }

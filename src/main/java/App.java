@@ -1,18 +1,22 @@
-public class App {
-    private final AbstractTalker talker;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-    App(AbstractTalker talker) {
+final public class App {
+    private @NonNull final AbstractTalker talker;
+
+    App(@NonNull final AbstractTalker talker) {
         this.talker = talker;
     }
 
     public static void main(String[] args) {
-        IDataStorage dataStorage = new SimpleDataStorage();
-        IRequestHandler requestHandler = new BaseRequestHandler();
-        AbstractTalker talker = new ConsoleTalker(dataStorage, requestHandler);
-        new App(talker).run();
+        @NonNull final IDataStorage dataStorage = new SimpleDataStorage();
+        @NonNull final IRequestHandler requestHandler = new BaseRequestHandler();
+        @NonNull final AbstractTalker talker = new ConsoleTalker(dataStorage, requestHandler);
+        @NonNull final App app = new App(talker);
+        app.run();
     }
 
-    void run() {
+    void run()
+    {
         talker.run();
     }
 }

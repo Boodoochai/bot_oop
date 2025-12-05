@@ -1,10 +1,10 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class SimpleDataStorage implements IDataStorage {
-    private final Map<UUID, Client> clientByUUID;
-    private final Map<String, Client> clientByName;
+import java.util.*;
+
+final public class SimpleDataStorage implements IDataStorage {
+    private @NonNull final Map<UUID, Client> clientByUUID;
+    private @NonNull final Map<String, Client> clientByName;
 
     public SimpleDataStorage() {
         clientByUUID = new HashMap<>();
@@ -12,32 +12,32 @@ public class SimpleDataStorage implements IDataStorage {
     }
 
     @Override
-    public Client clientById(UUID clientUUID) {
+    public @NonNull Client clientById(@NonNull final UUID clientUUID) {
         return clientByUUID.get(clientUUID);
     }
 
     @Override
-    public Client clientByName(String clientName) {
+    public @NonNull Client clientByName(@NonNull final String clientName) {
         return clientByName.get(clientName);
     }
 
     @Override
-    public boolean isExistClientById(UUID clientUUID) {
+    public boolean isExistClientById(@NonNull final UUID clientUUID) {
         return clientByUUID.containsKey(clientUUID);
     }
 
     @Override
-    public boolean isExistClientByName(String clientName) {
+    public boolean isExistClientByName(@NonNull final String clientName) {
         return clientByName.containsKey(clientName);
     }
 
     @Override
-    public void putClientById(UUID uuid, Client client) {
+    public void putClientById(@NonNull final UUID uuid, @NonNull final Client client) {
         clientByUUID.put(uuid, client);
     }
 
     @Override
-    public void putClientByName(String name, Client client) {
+    public void putClientByName(@NonNull final String name, @NonNull final Client client) {
         clientByName.put(name, client);
     }
 }

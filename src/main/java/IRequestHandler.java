@@ -1,3 +1,5 @@
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 public interface IRequestHandler {
-    Response handleRequest(Request request);
+    Response handleRequest(@NonNull final Request request);
 }

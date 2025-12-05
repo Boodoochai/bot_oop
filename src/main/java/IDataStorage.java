@@ -1,16 +1,17 @@
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.UUID;
 
 public interface IDataStorage {
+    @NonNull Client clientById(@NonNull final UUID clientUUID);
 
-    Client clientById(final UUID clientUUID);
+    @NonNull Client clientByName(@NonNull final String clientName);
 
-    Client clientByName(final String clientName);
+    boolean isExistClientById(@NonNull final UUID clientUUID);
 
-    boolean isExistClientById(final UUID clientUUID);
+    boolean isExistClientByName(@NonNull final String clientName);
 
-    boolean isExistClientByName(final String clientName);
+    void putClientById(@NonNull final UUID uuid, @NonNull final Client client);
 
-    void putClientById(final UUID uuid, final Client client);
-
-    void putClientByName(final String name, final Client client);
+    void putClientByName(@NonNull final String name, @NonNull final Client client);
 }
