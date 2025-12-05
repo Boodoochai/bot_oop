@@ -10,14 +10,9 @@ repositories {
 
 dependencies {
     implementation 'com.google.guava:guava:32.0.1-android'
-
-    // UUID
     implementation 'com.fasterxml.uuid:java-uuid-generator:4.0.1'
 
-    // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-
-    // Mockito
     testImplementation 'org.mockito:mockito-core:5.11.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
 }
@@ -25,10 +20,13 @@ dependencies {
 test {
     useJUnitPlatform()
 
+    // >>> Важная строка
+    systemProperty 'file.encoding', 'UTF-8'
+
     testLogging {
-        events "passed", "skipped", "failed"  // выводить все результаты
-        exceptionFormat "full"                // выводить полный стек трейс при ошибках
-        showStandardStreams = true            // вывод System.out.println
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
     }
 }
 
@@ -38,18 +36,20 @@ jacoco {
 
 jacocoTestReport {
     dependsOn test
-
     reports {
         xml.required = true
         html.required = true
     }
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
 tasks.named('run') {
     standardInput = System.in
 }
 
-// Главный класс приложения
 application {
     mainClass = 'App'
 }

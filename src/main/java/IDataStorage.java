@@ -1,5 +1,7 @@
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface IDataStorage {
@@ -14,4 +16,22 @@ public interface IDataStorage {
     void putClientById(@NonNull final UUID uuid, @NonNull final Client client);
 
     void putClientByName(@NonNull final String name, @NonNull final Client client);
+
+    void addMeeting(@NonNull final Meeting meeting);
+
+    @NonNull List<Meeting> getMeetingsBetween(
+            @NonNull final LocalDateTime from,
+            @NonNull final LocalDateTime to
+    );
+
+    @NonNull List<Meeting> getMeetingsForClientBetween(
+            @NonNull final Client client,
+            @NonNull final LocalDateTime from,
+            @NonNull final LocalDateTime to
+    );
+
+    @NonNull List<Meeting> getMeetingsWithClient(
+            @NonNull final Client client
+    );
+
 }
