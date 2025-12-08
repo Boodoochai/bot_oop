@@ -173,6 +173,31 @@ public class ClientTest {
             assertNotNull(client.toString());
             assertFalse(client.toString().isEmpty());
         }
+
+        @Test
+        @DisplayName("toString() should contain clientId and name")
+        void toStringShouldIncludeKeyFields() {
+            String str = client.toString();
+            assertTrue(str.contains("Client{"), "toString() should start with class name");
+            assertTrue(str.contains("clientId=" + testUuid), "toString() should include clientId");
+            assertTrue(str.contains("name='" + testName), "toString() should include name");
+            assertTrue(str.contains("}"), "toString() should end with }");
+        }
+
+        @Test
+        @DisplayName("toString() should be consistent across calls")
+        void toStringShouldBeConsistent() {
+            String first = client.toString();
+            String second = client.toString();
+            assertEquals(first, second, "toString() should return the same value on repeated calls");
+        }
+
+        @Test
+        @DisplayName("toString() should be unique for different clients")
+        void toStringShouldBeUniqueForDifferentClients() {
+            Client other = new Client(UUID.randomUUID(), "Jane Doe");
+            assertNotEquals(client.toString(), other.toString(), "Different clients should have different toString()");
+        }
     }
 
     @Nested
