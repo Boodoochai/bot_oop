@@ -1,5 +1,6 @@
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
@@ -46,8 +47,14 @@ public final class TelegramTalker extends AbstractTalker {
                         // Получаем Response
                         Response response = requestHandler.handleRequest(request);
 
-                        // Отправляем ответ в Telegram
-                        bot.execute(new SendMessage(update.message().chat().id(), response.getText()));
+                        var options = response.getOptions();
+
+                        if (options != null) {
+                            ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(options).resizeKeyboard(true).oneTimeKeyboard(true);
+                            bot.execute(new SendMessage(update.message().chat().id(), response.getText()).replyMarkup(keyboard));
+                        } else {
+                            bot.execute(new SendMessage(update.message().chat().id(), response.getText()));
+                        }
                     }
                 }
 
