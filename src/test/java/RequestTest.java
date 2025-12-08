@@ -216,7 +216,48 @@ class RequestTest {
         @DisplayName("toString() should not be null")
         void toStringShouldNotBeNull() {
             Request request = new Request(mock(Client.class), "Hi");
-            assertNotNull(request.toString());
+            assertNotNull(request.toString(), "toString() should never return null");
+        }
+
+        @Test
+        @DisplayName("toString() should contain requestOwner and text")
+        void toStringShouldIncludeAllFields() {
+            Client client = mock(Client.class);
+            when(client.toString()).thenReturn("MockClient");
+            Request request = new Request(client, "Help");
+
+            String result = request.toString();
+
+            assertTrue(result.contains("Request{"), "toString() should start with class name");
+            assertTrue(result.contains("requestOwner=MockClient"), "toString() should include requestOwner");
+            assertTrue(result.contains("text='Help'"), "toString() should include text");
+            assertTrue(result.contains("}"), "toString() should end with }");
+        }
+
+        @Test
+        @DisplayName("toString() should be consistent across calls")
+        void toStringShouldBeConsistent() {
+            Client client = mock(Client.class);
+            Request request = new Request(client, "Test");
+
+            String first = request.toString();
+            String second = request.toString();
+
+            assertEquals(first, second, "toString() result should be the same on every call");
+        }
+
+        @Test
+        @DisplayName("toString() should return different values for different requests")
+        void toStringShouldBeDifferentForDifferentRequests() {
+            Client client1 = mock(Client.class);
+            Client client2 = mock(Client.class);
+
+            Request r1 = new Request(client1, "Hello");
+            Request r2 = new Request(client2, "Hello");
+            Request r3 = new Request(client1, "World");
+
+            assertNotEquals(r1.toString(), r2.toString(), "Different owners should produce different toString()");
+            assertNotEquals(r1.toString(), r3.toString(), "Different texts should produce different toString()");
         }
     }
 

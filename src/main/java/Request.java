@@ -34,4 +34,12 @@ final public class Request {
     public int hashCode() {
         return Objects.hash(requestOwner, text);
     }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "requestOwner=" + requestOwner +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }
