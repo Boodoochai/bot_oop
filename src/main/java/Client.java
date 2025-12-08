@@ -1,5 +1,6 @@
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 final public class Client {
@@ -16,4 +17,18 @@ final public class Client {
         return clientId;
     }
     public @NonNull String getName() { return name; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client)) return false;
+        Client client = (Client) o;
+        if (! clientId.equals(client.clientId)) return false;
+        return name.equals(client.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientId, name);
+    }
 }
