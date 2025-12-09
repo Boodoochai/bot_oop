@@ -23,7 +23,7 @@ FROM eclipse-temurin:17-jre-focal
 WORKDIR /app
 
 # Копируем JAR (с учётом имени)
-COPY --from=builder /app/build/libs/telegram-bot-1.0.0.jar /app/app.jar
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
 # Amvera проксирует на 80 порт → ваш бот не должен его слушать
 # EXPOSE 80 ← можно убрать, если бот не открывает HTTP-порт
