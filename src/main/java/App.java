@@ -23,10 +23,10 @@ final public class App {
         if (args.length > 1 && args[1].equals("console")) {
             talker = new ConsoleTalker(clientIdentificationHandler, requestHandler);
         } else {
-            String botToken = System.getProperty("BOT_TOKEN");
-            System.out.println(botToken);
+            String botToken = System.getenv("BOT_TOKEN");
+
             if (botToken == null || botToken.trim().isEmpty()) {
-                throw new IllegalStateException("Переменная среды BOT_TOKEN не задана. Установите её перед запуском.");
+                throw new IllegalStateException("Переменная окружения BOT_TOKEN не задана. Установите её через -e BOT_TOKEN=... или в .env (в Docker).");
             }
             talker = new TelegramTalker(clientIdentificationHandler, requestHandler, botToken);
         }
@@ -35,8 +35,7 @@ final public class App {
         app.run();
     }
 
-    void run()
-    {
+    void run() {
         talker.run();
     }
 }
