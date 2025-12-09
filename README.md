@@ -24,3 +24,8 @@ or
 ```
 
 ---
+
+sudo docker run -p 8080:8080 -e BOT_TOKEN=8052483079:AAHFu7aZD_aHn0AL-Qq8SXSxrYQA9E2QtKQ tg-bot
+
+sudo docker build -t tg-bot .
+

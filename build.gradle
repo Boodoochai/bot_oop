@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'jacoco'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -54,3 +55,10 @@ tasks.named('run') {
 application {
     mainClass.set('App')
 }
+
+shadowJar {
+    archiveClassifier.set('')
+}
+
+jar.enabled = false
+build.finalizedBy(shadowJar)
