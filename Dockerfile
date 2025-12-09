@@ -1,32 +1,35 @@
-# Этап 1: Сборка (build stage)
+# ---------- Stage 1: Build ----------
 FROM gradle:8.5-jdk17 AS builder
 
 WORKDIR /app
 
+# Копируем только Gradle-файлы для кэширования зависимостей
 COPY build.gradle settings.gradle ./
+COPY gradle ./gradle
+
+# Прогреваем зависимости (не обязательно, но ускоряет сборку)
+RUN gradle dependencies --no-daemon || true
+
+# Копируем исходники
 COPY src ./src
 
-# Собираем fat JAR
+# Сборка fat JAR (shadowJar)
 RUN gradle shadowJar --no-daemon
 
-# Этап 2: Запуск (runtime stage)
+
+# ---------- Stage 2: Runtime ----------
 FROM eclipse-temurin:17-jre-focal
 
 WORKDIR /app
 
-# Копируем JAR из этапа сборки
-COPY --from=builder /app/build/libs/*.jar /app/app.jar
+# Копируем собранный jar
+COPY --from=builder /app/build/libs/*-all.jar /app/app.jar
 
-# Порт (если нужно)
+# Указываем порт (Amvera будет его проксировать)
 EXPOSE 80
 
-# Переменная для токена бота
+# Переменная окружения (пустая, значение подаётся на сервере)
 ENV BOT_TOKEN=""
 
-# Проверка токена и запуск
-CMD if [ -z "$BOT_TOKEN" ]; then \
-      echo "Ошибка: BOT_TOKEN не задан! Используйте -e BOT_TOKEN=ваш_токен"; \
-      exit 1; \
-    else \
-      java -Dfile.encoding=UTF-8 -jar /app/app.jar; \
-    fi
+# Команда запуска — именно её и нужно указать в `command` в Amvera UI
+CMD ["java", "-Dfile.encoding=UTF-8", "-jar", "/app/app.jar"]
