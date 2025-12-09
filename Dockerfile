@@ -3,17 +3,17 @@ FROM gradle:8.5-jdk17 AS builder
 
 WORKDIR /app
 
-# Копируем только Gradle-файлы для кэширования зависимостей
+# Копируем Gradle-файлы
 COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
 
-# Прогреваем зависимости (не обязательно, но ускоряет сборку)
+# Прогреваем зависимости
 RUN gradle dependencies --no-daemon || true
 
 # Копируем исходники
 COPY src ./src
 
-# Сборка fat JAR (shadowJar)
+# Сборка fat JAR
 RUN gradle shadowJar --no-daemon
 
 
@@ -22,14 +22,14 @@ FROM eclipse-temurin:17-jre-focal
 
 WORKDIR /app
 
-# Копируем собранный jar
-COPY --from=builder /app/build/libs/*-all.jar /app/app.jar
+# Копируем JAR (с учётом имени)
+COPY --from=builder /app/build/libs/telegram-bot-1.0.0.jar /app/app.jar
 
-# Указываем порт (Amvera будет его проксировать)
-EXPOSE 80
+# Amvera проксирует на 80 порт → ваш бот не должен его слушать
+# EXPOSE 80 ← можно убрать, если бот не открывает HTTP-порт
 
-# Переменная окружения (пустая, значение подаётся на сервере)
+# Переменная для токена
 ENV BOT_TOKEN=""
 
-# Команда запуска — именно её и нужно указать в `command` в Amvera UI
+# Запуск
 CMD ["java", "-Dfile.encoding=UTF-8", "-jar", "/app/app.jar"]
