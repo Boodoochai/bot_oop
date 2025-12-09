@@ -5,39 +5,67 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
+// Основная информация о проекте
+group = 'com.example'
 archivesBaseName = 'telegram-bot'
 version = '1.0.0'
 
+// Настройка JDK
+//java {
+//    toolchain {
+//        languageVersion = JavaLanguageVersion.of(17)
+//    }
+//}
+
+// Кодировка
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Загрузка переменных из .env в системные свойства
+def loadEnv() {
+    def envFile = file('.env')
+    if (envFile.exists()) {
+        println "Загружаю переменные из .env"
+        envFile.eachLine { line ->
+            if (line && !line.startsWith('#') && line.contains('=')) {
+                def (key, value) = line.split('=', 2).collect { it.trim() }
+                value = value.replaceAll(/^"(.*)"$/, '$1').replaceAll(/^'(.*)'$/, '$1')
+                System.setProperty(key, value)
+                logger.info("ENV: $key = $value")
+            }
+        }
+    } else {
+        logger.warn("Файл .env не найден — используйте переменные окружения")
+    }
+}
+loadEnv()
+
 repositories {
-    maven { url 'https://maven.aliyun.com/repository/public' }
+    mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.aliyun.com/repository/public' }
 }
 
 dependencies {
+    // Основные зависимости
     implementation 'com.github.pengrad:java-telegram-bot-api:6.9.0'
-
     implementation 'com.google.guava:guava:32.0.1-android'
     implementation 'com.fasterxml.uuid:java-uuid-generator:4.0.1'
 
+    // Тестирование
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testImplementation 'org.mockito:mockito-core:5.11.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
+// Настройка тестов
 test {
     useJUnitPlatform()
+    systemProperties System.getProperties()
     systemProperty 'file.encoding', 'UTF-8'
     jvmArgs '-Xshare:off'
+
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
@@ -45,6 +73,7 @@ test {
     }
 }
 
+// Настройка JaCoCo для отчётов о покрытии
 jacoco {
     toolVersion = "0.8.11"
 }
@@ -54,17 +83,22 @@ jacocoTestReport {
     reports {
         xml.required = true
         html.required = true
+        csv.required = false
     }
 }
 
-tasks.named('run') {
+// Настройка запуска приложения
+run {
     standardInput = System.in
+    systemProperties System.getProperties()
 }
 
+// Точка входа
 application {
     mainClass.set('App')
 }
 
+// Сборка толстого JAR
 shadowJar {
     archiveClassifier.set('')
     manifest {
@@ -72,5 +106,8 @@ shadowJar {
     }
 }
 
+// Отключаем стандартный jar
 jar.enabled = false
+
+// Автоматически запускаем shadowJar после build
 build.finalizedBy(shadowJar)
