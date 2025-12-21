@@ -54,7 +54,7 @@ public class BaseTransitionTable implements ITransitionTable {
         if (nextState != null) {
             logger.debug("Переход: {} + '{}' → {}", state, symbol, nextState);
         } else {
-            logger.warn("Переход для состояния {} и символа '{}' не определён", state, symbol);
+            logger.debug("Переход для состояния {} и символа '{}' не определён", state, symbol);
         }
 
         return nextState;
