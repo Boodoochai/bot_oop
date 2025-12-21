@@ -15,13 +15,17 @@ public final class App {
 
     public App(Supplier<ApplicationRunner> runnerSupplier) {
         this.runnerSupplier = runnerSupplier;
+        logger.debug("Создан экземпляр App с runnerSupplier");
     }
 
     public void run() {
+        logger.info("Запуск приложения...");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Приложение остановлено")));
 
         try {
-            runnerSupplier.get().run();
+            ApplicationRunner runner = runnerSupplier.get();
+            logger.debug("Получен runner, запускаем...");
+            runner.run();
         } catch (Exception e) {
             logger.error("Неожиданная ошибка во время работы", e);
             throw e;
