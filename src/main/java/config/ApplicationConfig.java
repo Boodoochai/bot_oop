@@ -14,10 +14,14 @@ public final class ApplicationConfig {
     private final Mode mode;
     private final Interface iface;
     private final String botToken;
+    private final AutomatonFactory automatonFactory;
+    private final TransitionTableFactory transitionTableFactory;
 
     private ApplicationConfig(Builder builder) {
         this.mode = Objects.requireNonNull(builder.mode, "Mode не может быть null");
         this.iface = Objects.requireNonNull(builder.iface, "Interface не может быть null");
+        this.automatonFactory = builder.automatonFactory;
+        this.transitionTableFactory = builder.transitionTableFactory;
         this.botToken = builder.botToken;
 
         logger.debug("Создана конфигурация: mode={}, interface={}, botToken={}",
@@ -27,6 +31,14 @@ public final class ApplicationConfig {
     public static Builder builder() {
         logger.trace("Создание нового билдера конфигурации");
         return new Builder();
+    }
+
+    public AutomatonFactory getAutomatonFactory() {
+        return automatonFactory;
+    }
+
+    public TransitionTableFactory getTransitionTableFactory() {
+        return transitionTableFactory;
     }
 
     public Mode getMode() {
@@ -49,10 +61,32 @@ public final class ApplicationConfig {
         CONSOLE, TELEGRAM
     }
 
+    public enum AutomatonFactory {
+        BASE
+    }
+
+    public enum TransitionTableFactory {
+        BASE
+    }
+
     public static class Builder {
         private Mode mode = Mode.PRODUCTION;
         private Interface iface = Interface.TELEGRAM;
+        private AutomatonFactory automatonFactory = AutomatonFactory.BASE;
+        private TransitionTableFactory transitionTableFactory = TransitionTableFactory.BASE;
         private String botToken;
+
+        public Builder automatonFactory(AutomatonFactory automatonFactory) {
+            logger.debug("Установка фабрики автоматов: {}", automatonFactory);
+            this.automatonFactory = automatonFactory;
+            return this;
+        }
+
+        public Builder transitionTableFactory(TransitionTableFactory transitionTableFactory) {
+            logger.debug("Установка фабрики таблиц переходов: {}", transitionTableFactory);
+            this.transitionTableFactory = transitionTableFactory;
+            return this;
+        }
 
         public Builder mode(Mode mode) {
             logger.debug("Установка режима: {}", mode);
@@ -73,8 +107,8 @@ public final class ApplicationConfig {
         }
 
         public ApplicationConfig build() {
-            logger.info("Сборка конфигурации: mode={}, interface={}",
-                    mode, iface);
+            logger.info("Сборка конфигурации: mode={}, interface={}, automatonFactory={}, transitionTableFactory={}",
+                    mode, iface, automatonFactory, transitionTableFactory);
             return new ApplicationConfig(this);
         }
     }

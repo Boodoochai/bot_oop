@@ -103,7 +103,7 @@ public final class TelegramTalker extends AbstractTalker {
         try {
             var options = response.options();
             if (options != null) {
-                ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(options).resizeKeyboard(true).oneTimeKeyboard(true);
+                ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(options).resizeKeyboard(true);
                 bot.execute(new SendMessage(update.message().chat().id(), response.text()).replyMarkup(keyboard));
                 logger.debug("Отправлен ответ с кнопками пользователю: {}", update.message().chat().id());
             } else {

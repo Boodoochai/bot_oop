@@ -1,5 +1,6 @@
 package storage;
 
+import backend.automaton.IAutomaton;
 import model.Client;
 import model.Meeting;
 
@@ -22,19 +23,15 @@ public interface IDataStorage {
 
     void addMeeting(final Meeting meeting);
 
-    List<Meeting> getMeetingsBetween(
-            final LocalDateTime from,
-            final LocalDateTime to
-    );
+    List<Meeting> getMeetingsBetween(final LocalDateTime from, final LocalDateTime to);
 
-    List<Meeting> getMeetingsForClientBetween(
-            final Client client,
-            final LocalDateTime from,
-            final LocalDateTime to
-    );
+    List<Meeting> getMeetingsForClientBetween(final Client client, final LocalDateTime from, final LocalDateTime to);
 
-    List<Meeting> getMeetingsWithClient(
-            final Client client
-    );
+    List<Meeting> getMeetingsWithClient(final Client client);
 
+    boolean isExistAutomation(UUID uuid);
+
+    IAutomaton getAutomation(UUID uuid);
+
+    void setAutomation(UUID uuid, IAutomaton automaton);
 }

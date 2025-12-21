@@ -1,5 +1,6 @@
 package storage;
 
+import backend.automaton.IAutomaton;
 import model.Client;
 import model.Meeting;
 import org.slf4j.Logger;
@@ -14,11 +15,13 @@ final public class SimpleDataStorage implements IDataStorage {
     private final Map<UUID, Client> clientByUUID;
     private final Map<String, Client> clientByName;
     private final List<Meeting> meetings;
+    private final Map<Client, IAutomaton> automatons;
 
     public SimpleDataStorage() {
         clientByUUID = new HashMap<>();
         clientByName = new HashMap<>();
         meetings = new ArrayList<>();
+        automatons = new HashMap<>();
         logger.debug("Инициализировано хранилище: SimpleDataStorage");
     }
 
@@ -110,5 +113,20 @@ final public class SimpleDataStorage implements IDataStorage {
         }
         logger.debug("Запрос всех встреч для клиента '{}': найдено {} встреч", client.name(), result.size());
         return result;
+    }
+
+    @Override
+    public boolean isExistAutomation(UUID uuid) {
+        return automatons.containsKey(clientById(uuid));
+    }
+
+    @Override
+    public IAutomaton getAutomation(UUID uuid) {
+        return automatons.get(clientById(uuid));
+    }
+
+    @Override
+    public void setAutomation(UUID uuid, IAutomaton automaton) {
+        automatons.put(clientById(uuid), automaton);
     }
 }
