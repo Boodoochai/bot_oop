@@ -1,8 +1,19 @@
-import org.checkerframework.checker.nullness.qual.NonNull;
+package backend.automaton;
 
-import java.time.*;
+import Identification.ClientIdentificationHandler;
+import model.Client;
+import model.Meeting;
+import model.Response;
+import storage.IDataStorage;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class CalendarAutomaton {
 
@@ -13,9 +24,18 @@ public final class CalendarAutomaton {
     private static final DateTimeFormatter YEAR_MONTH_FORMAT =
             DateTimeFormatter.ofPattern("MM.yy");
 
-    private final @NonNull IDataStorage dataStorage;
-    private final @NonNull ClientIdentificationHandler clientIdentificationHandler;
-    private final @NonNull Client owner;
+    private final IDataStorage dataStorage;
+    private final ClientIdentificationHandler clientIdentificationHandler;
+    private final Client owner;
+    private State state = State.IDLE;
+
+    public CalendarAutomaton(IDataStorage dataStorage,
+                             ClientIdentificationHandler clientIdentificationHandler,
+                             Client owner) {
+        this.dataStorage = dataStorage;
+        this.clientIdentificationHandler = clientIdentificationHandler;
+        this.owner = owner;
+    }
 
     public State getState() {
         return state;
@@ -25,22 +45,7 @@ public final class CalendarAutomaton {
         this.state = state;
     }
 
-    // Состояние автомата (пока одно, можно расширять)
-    private enum State {
-        IDLE
-    }
-
-    private State state = State.IDLE;
-
-    public CalendarAutomaton(@NonNull IDataStorage dataStorage,
-                             @NonNull ClientIdentificationHandler clientIdentificationHandler,
-                             @NonNull Client owner) {
-        this.dataStorage = dataStorage;
-        this.clientIdentificationHandler = clientIdentificationHandler;
-        this.owner = owner;
-    }
-
-    public @NonNull Response feed(@NonNull String text) {
+    public Response feed(String text) {
         text = text.trim();
         if (text.isEmpty()) {
             return new Response("Пустой запрос. Напишите '/help' для списка команд.");
@@ -51,67 +56,57 @@ public final class CalendarAutomaton {
         String args = parts.length > 1 ? parts[1] : "";
 
         try {
-            switch (cmd) {
-                case "/start":
-                    return handleHelp();
-                case "/help":
-                    return handleHelp();
-                case "help":
-                    return handleHelp();
-                case "add":
-                    return handleAdd(args);
-                case "day":
-                case "on":
-                    return handleDay(args);
-                case "week":
-                    return handleWeek(args);
-                case "month":
-                    return handleMonth(args);
-                case "with":
-                    return handleWith(args);
-                default:
-                    return new Response("Неизвестная команда: " + cmd +
-                            "\nНапишите '/help' для списка команд.");
-            }
+            return switch (cmd) {
+                case "/start", "/help", "help" -> handleHelp();
+                case "add" -> handleAdd(args);
+                case "day", "on" -> handleDay(args);
+                case "week" -> handleWeek(args);
+                case "month" -> handleMonth(args);
+                case "with" -> handleWith(args);
+                default -> new Response("Неизвестная команда: " + cmd +
+                        "\nНапишите '/help' для списка команд.");
+            };
         } catch (Exception e) {
             return new Response("Ошибка обработки запроса: " + e.getMessage());
         }
     }
 
     // Какие переходы вообще доступны в этом состоянии автомат
-    public @NonNull Set<String> getAvailableTransitions() {
+    public Set<String> getAvailableTransitions() {
         return Set.of("help", "add", "day", "on", "week", "month", "with");
     }
 
-    // Copy(bara) BaseRequestHandler
-
-    private @NonNull Response handleHelp() {
+    private Response handleHelp() {
         String text =
-                "Доступные команды:\n" +
-                        "1) /help\n" +
-                        "   Информация про возможности (Это сообщение).\n" +
-                        "\n" +
-                        "2) add ДД.ММ.ГГ HH:MM DUR_MIN [Заголовок; Описание; Участник1,Участник2,...]\n" +
-                        "   Год можно не указывать: ДД.ММ\n" +
-                        "   Заголовок и участники — необязательны.\n" +
-                        "   Пример:\n" +
-                        "   add 20.01.25 14:00 60 Встреча; Урок; Иван,Петя\n" +
-                        "\n" +
-                        "3) day ДД.ММ.ГГ\n" +
-                        "   Показать встречи на день (год можно не указывать: ДД.ММ).\n" +
-                        "\n" +
-                        "4) week ДД.ММ.ГГ\n" +
-                        "   Показать встречи на неделю (с этой даты, год можно не указывать).\n" +
-                        "\n" +
-                        "5) month ДД.ММ.ГГ\n" +
-                        "   Показать встречи на месяц (любая дата месяца, год можно не указывать).\n" +
-                        "\n" +
-                        "6) with Имя\n" +
-                        "   Показать все встречи с этим человеком.\n";
+                """
+                        Доступные команды:
+                        1) /help
+                           Информация про возможности (Это сообщение).
+                        
+                        2) add ДД.ММ.ГГ HH:MM DUR_MIN [Заголовок; Описание; Участник1,Участник2,...]
+                           Год можно не указывать: ДД.ММ
+                           Заголовок и участники — необязательны.
+                           Пример:
+                           add 20.01.25 14:00 60 Встреча; Урок; Иван,Петя
+                        
+                        3) day ДД.ММ.ГГ
+                           Показать встречи на день (год можно не указывать: ДД.ММ).
+                        
+                        4) week ДД.ММ.ГГ
+                           Показать встречи на неделю (с этой даты, год можно не указывать).
+                        
+                        5) month ДД.ММ.ГГ
+                           Показать встречи на месяц (любая дата месяца, год можно не указывать).
+                        
+                        6) with Имя
+                           Показать все встречи с этим человеком.
+                        """;
         return new Response(text);
     }
 
-    private @NonNull Response handleAdd(@NonNull final String args) {
+    // Copy(bara)
+
+    private Response handleAdd(final String args) {
         // Ожидаем:
         // ДД.ММ[.ГГ] HH:MM DUR_MIN [Заголовок; Описание; Участник1,Участник2,...]
         String[] tokens = args.split("\\s+", 4);
@@ -121,14 +116,14 @@ public final class CalendarAutomaton {
 
         String dateStr = tokens[0]; // 20.01.25
         String timeStr = tokens[1]; // 14:00
-        String durStr  = tokens[2]; // 60
-        String rest    = tokens.length >= 4 ? tokens[3] : ""; // "Заголовок; Описание; Участник1,Участник2,..."
+        String durStr = tokens[2]; // 60
+        String rest = tokens.length >= 4 ? tokens[3] : ""; // "Заголовок; Описание; Участник1,Участник2,..."
 
         LocalDate date = parseDate(dateStr);
         LocalTime time = LocalTime.parse(timeStr);
         int durationMinutes = Integer.parseInt(durStr);
         LocalDateTime start = LocalDateTime.of(date, time);
-        LocalDateTime end   = start.plusMinutes(durationMinutes);
+        LocalDateTime end = start.plusMinutes(durationMinutes);
 
         String title = "";
         String description = "";
@@ -160,7 +155,7 @@ public final class CalendarAutomaton {
         return new Response("Встреча добавлена:\n" + formatMeeting(meeting));
     }
 
-    private @NonNull Response handleDay(@NonNull final String args) {
+    private Response handleDay(final String args) {
         LocalDate date = parseDate(args.trim());
         LocalDateTime from = date.atStartOfDay();
         LocalDateTime to = date.atTime(23, 59, 59);
@@ -178,7 +173,7 @@ public final class CalendarAutomaton {
         return new Response(sb.toString());
     }
 
-    private @NonNull Response handleWeek(@NonNull final String args) {
+    private Response handleWeek(final String args) {
         LocalDate startDate = parseDate(args.trim());
         LocalDateTime from = startDate.atStartOfDay();
         LocalDateTime to = startDate.plusDays(6).atTime(23, 59, 59);
@@ -196,7 +191,7 @@ public final class CalendarAutomaton {
         return new Response(sb.toString());
     }
 
-    private @NonNull Response handleMonth(@NonNull final String args) {
+    private Response handleMonth(final String args) {
         // args: ДД.ММ[.ГГ] — берём только месяц и год
         LocalDate anyDate = parseDate(args.trim());
         YearMonth ym = YearMonth.of(anyDate.getYear(), anyDate.getMonthValue());
@@ -217,7 +212,7 @@ public final class CalendarAutomaton {
         return new Response(sb.toString());
     }
 
-    private @NonNull Response handleWith(@NonNull final String args) {
+    private Response handleWith(final String args) {
         String name = args.trim();
         if (name.isEmpty()) {
             return new Response("Нужно указать имя: with Имя");
@@ -236,25 +231,25 @@ public final class CalendarAutomaton {
         return new Response(sb.toString());
     }
 
-    private String formatMeeting(@NonNull final Meeting m) {
+    private String formatMeeting(final Meeting m) {
         StringBuilder sb = new StringBuilder();
-        sb.append(m.getTitle())
+        sb.append(m.title())
                 .append(" (")
-                .append(m.getStart().format(DATE_TIME_FORMAT))
+                .append(m.start().format(DATE_TIME_FORMAT))
                 .append(" - ")
-                .append(m.getEnd().format(DATE_TIME_FORMAT))
+                .append(m.end().format(DATE_TIME_FORMAT))
                 .append(")\n")
-                .append("Описание: ").append(m.getDescription()).append("\n")
+                .append("Описание: ").append(m.description()).append("\n")
                 .append("Участники: ");
 
         boolean first = true;
-        for (Client c : m.getParticipants()) {
+        for (Client c : m.participants()) {
             if (!first) sb.append(", ");
             first = false;
 
-            String name = c.getName();
+            String name = c.name();
             if (name.isBlank()) {
-                sb.append(c.getUUID());
+                sb.append(c.clientId());
             } else {
                 sb.append(name);
             }
@@ -262,14 +257,13 @@ public final class CalendarAutomaton {
         return sb.toString();
     }
 
-    private String formatMeetingShort(@NonNull final Meeting m) {
-        return m.getTitle() + " [" +
-                m.getStart().format(DATE_TIME_FORMAT) + " - " +
-                m.getEnd().format(DATE_TIME_FORMAT) + "]";
+    private String formatMeetingShort(final Meeting m) {
+        return m.title() + " [" +
+                m.start().format(DATE_TIME_FORMAT) + " - " +
+                m.end().format(DATE_TIME_FORMAT) + "]";
     }
 
-
-    private LocalDate parseDate(@NonNull String s) {
+    private LocalDate parseDate(String s) {
         String[] parts = s.trim().split("\\.");
         if (parts.length < 2 || parts.length > 3) {
             throw new IllegalArgumentException("Ожидается дата в формате ДД.ММ[.ГГ]");
@@ -292,5 +286,11 @@ public final class CalendarAutomaton {
         }
 
         return LocalDate.of(year, month, day);
+    }
+
+
+    // Состояние автомата (пока одно, можно расширять)
+    private enum State {
+        IDLE
     }
 }

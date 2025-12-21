@@ -1,9 +1,15 @@
+package frontend.talker;
+
+import Identification.ClientIdentificationHandler;
+import backend.requestHandler.IRequestHandler;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
+import model.Request;
+import model.Response;
 
 public final class TelegramTalker extends AbstractTalker {
 
@@ -38,22 +44,20 @@ public final class TelegramTalker extends AbstractTalker {
                         }
                         String requestText = update.message().text();
 
-                        // Создаем Request
                         Request request = new Request(
                                 clientIdentificationHandler.getClient(userName),
                                 requestText
                         );
 
-                        // Получаем Response
                         Response response = requestHandler.handleRequest(request);
 
-                        var options = response.getOptions();
+                        var options = response.options();
 
                         if (options != null) {
                             ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(options).resizeKeyboard(true).oneTimeKeyboard(true);
-                            bot.execute(new SendMessage(update.message().chat().id(), response.getText()).replyMarkup(keyboard));
+                            bot.execute(new SendMessage(update.message().chat().id(), response.text()).replyMarkup(keyboard));
                         } else {
-                            bot.execute(new SendMessage(update.message().chat().id(), response.getText()));
+                            bot.execute(new SendMessage(update.message().chat().id(), response.text()));
                         }
                     }
                 }
@@ -63,7 +67,8 @@ public final class TelegramTalker extends AbstractTalker {
                 e.printStackTrace();
                 try {
                     Thread.sleep(2000);
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException ignored) {
+                }
             }
         }
     }

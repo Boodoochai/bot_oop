@@ -1,41 +1,30 @@
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import runner.ApplicationRunner;
 
-final public class App {
-    private @NonNull final AbstractTalker talker;
+import java.util.function.Supplier;
 
-    App(@NonNull final AbstractTalker talker) {
-        this.talker = talker;
+/**
+ * Основной класс приложения. Полностью зависит от внедрённых зависимостей.
+ * Не содержит логики запуска.
+ */
+public final class App {
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
+
+    private final Supplier<ApplicationRunner> runnerSupplier;
+
+    public App(Supplier<ApplicationRunner> runnerSupplier) {
+        this.runnerSupplier = runnerSupplier;
     }
 
-    public static void main(@NonNull String[] args) {
-        @NonNull final IDataStorage dataStorage = new SimpleDataStorage();
+    public void run() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Приложение остановлено")));
 
-        @NonNull final ClientIdentificationHandler clientIdentificationHandler = new ClientIdentificationHandler(dataStorage);
-
-        @NonNull final IRequestHandler requestHandler;
-        if (args.length > 0 && args[0].equals("demo")) {
-            requestHandler = new DemoRequestHandler(dataStorage, clientIdentificationHandler);
-        } else {
-            requestHandler = new BaseRequestHandler(dataStorage, clientIdentificationHandler);
+        try {
+            runnerSupplier.get().run();
+        } catch (Exception e) {
+            logger.error("Неожиданная ошибка во время работы", e);
+            throw e;
         }
-
-        @NonNull final AbstractTalker talker;
-        if (args.length > 1 && args[1].equals("console")) {
-            talker = new ConsoleTalker(clientIdentificationHandler, requestHandler);
-        } else {
-            String botToken = System.getenv("BOT_TOKEN");
-
-            if (botToken == null || botToken.trim().isEmpty()) {
-                throw new IllegalStateException("Переменная окружения BOT_TOKEN не задана. Установите её через -e BOT_TOKEN=... или в .env (в Docker).");
-            }
-            talker = new TelegramTalker(clientIdentificationHandler, requestHandler, botToken);
-        }
-
-        @NonNull final App app = new App(talker);
-        app.run();
-    }
-
-    void run() {
-        talker.run();
     }
 }

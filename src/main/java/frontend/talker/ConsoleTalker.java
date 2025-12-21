@@ -1,9 +1,16 @@
+package frontend.talker;
+
+import Identification.ClientIdentificationHandler;
+import backend.requestHandler.IRequestHandler;
+import model.Client;
+import model.Request;
+import model.Response;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Scanner;
 
-final class ConsoleTalker extends AbstractTalker {
-    ConsoleTalker(@NonNull final ClientIdentificationHandler clientIdentificationHandler, @NonNull final IRequestHandler requestHandler) {
+final public class ConsoleTalker extends AbstractTalker {
+    public ConsoleTalker(@NonNull final ClientIdentificationHandler clientIdentificationHandler, @NonNull final IRequestHandler requestHandler) {
         super(clientIdentificationHandler, requestHandler);
     }
 
@@ -29,8 +36,8 @@ final class ConsoleTalker extends AbstractTalker {
             @NonNull final Request request = genRequest(input, requestString);
             @NonNull final Response response = requestHandler.handleRequest(request);
 
-            System.out.println("Response:");
-            System.out.println(response.getText());
+            System.out.println("model.Response:");
+            System.out.println(response.text());
         }
 
         in.close();
