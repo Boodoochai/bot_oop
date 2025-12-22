@@ -1,6 +1,7 @@
 package storage;
 
 import backend.automaton.IAutomaton;
+import backend.useCases.handlers.IUseCaseHandler;
 import model.Client;
 import model.Meeting;
 
@@ -34,4 +35,12 @@ public interface IDataStorage {
     IAutomaton getAutomation(UUID uuid);
 
     void setAutomation(UUID uuid, IAutomaton automaton);
+
+    boolean isExistUseCaseHandler(UUID uuid);
+
+    void setUseCaseHandler(UUID uuid, IUseCaseHandler useCaseHandler);
+
+    IUseCaseHandler getUseCaseHandler(UUID uuid);
+
+    void deleteUseCaseHandler(UUID uuid);
 }

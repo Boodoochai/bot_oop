@@ -12,4 +12,6 @@ public interface IAutomaton {
     String getStateText();
 
     UseCase getUseCase();
+
+    void useCaseDone();
 }

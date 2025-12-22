@@ -8,6 +8,7 @@ import backend.automaton.ITransitionTableFactory;
 import backend.requestHandler.BaseRequestHandler;
 import backend.requestHandler.DemoRequestHandler;
 import backend.requestHandler.IRequestHandler;
+import backend.useCases.providers.BaseUseCaseProvider;
 import config.ApplicationConfig;
 import frontend.talker.AbstractTalker;
 import frontend.talker.ConsoleTalker;
@@ -41,7 +42,10 @@ public final class ComponentFactory {
     public IRequestHandler createRequestHandler() {
         ClientIdentificationHandler clientHandler = clientIdentificationHandler;
         IAutomatonFactory automatonFactory = createAutomatonFactory();
-        return config.getMode() == ApplicationConfig.Mode.DEMO ? new DemoRequestHandler(dataStorage, clientHandler) : new BaseRequestHandler(dataStorage, clientHandler, automatonFactory);
+        return switch (config.getMode()) {
+            case DEMO -> new DemoRequestHandler(dataStorage, clientHandler);
+            default -> new BaseRequestHandler(dataStorage, clientHandler, automatonFactory, new BaseUseCaseProvider());
+        };
     }
 
     public AbstractTalker createTalker() {
