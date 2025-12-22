@@ -10,12 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
-public final class BaseRequestHandler extends IRequestHandler {
+public final class BaseRequestHandler implements IRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(BaseRequestHandler.class);
+    final IDataStorage dataStorage;
+    final ClientIdentificationHandler clientIdentificationHandler;
     private final IAutomatonFactory automatonFactory;
 
     public BaseRequestHandler(IDataStorage dataStorage, ClientIdentificationHandler clientIdentificationHandler, IAutomatonFactory automatonFactory) {
-        super(dataStorage, clientIdentificationHandler);
+        this.dataStorage = dataStorage;
+        this.clientIdentificationHandler = clientIdentificationHandler;
         this.automatonFactory = automatonFactory;
         logger.debug("Инициализирован AutomatonRequestHandler");
     }

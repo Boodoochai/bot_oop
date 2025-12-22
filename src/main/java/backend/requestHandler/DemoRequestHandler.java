@@ -7,11 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
-final public class DemoRequestHandler extends IRequestHandler {
+final public class DemoRequestHandler implements IRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(DemoRequestHandler.class);
+    final IDataStorage dataStorage;
+    final ClientIdentificationHandler clientIdentificationHandler;
 
     public DemoRequestHandler(final IDataStorage dataStorage, final ClientIdentificationHandler clientIdentificationHandler) {
-        super(dataStorage, clientIdentificationHandler);
+        this.dataStorage = dataStorage;
+        this.clientIdentificationHandler = clientIdentificationHandler;
         logger.debug("Инициализирован DemoRequestHandler");
     }
 
