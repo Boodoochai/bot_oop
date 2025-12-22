@@ -3,6 +3,7 @@ package backend.automaton.base;
 import backend.automaton.IAutomaton;
 import backend.automaton.IState;
 import backend.automaton.ITransitionTable;
+import backend.useCases.UseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,5 +43,10 @@ public class BaseAutomaton implements IAutomaton {
         String text = transitionTable.getStateText(currentState);
         logger.debug("Текст состояния {}: '{}'", currentState, text);
         return text;
+    }
+
+    @Override
+    public UseCase getUseCase() {
+        return transitionTable.getUseCase(currentState);
     }
 }

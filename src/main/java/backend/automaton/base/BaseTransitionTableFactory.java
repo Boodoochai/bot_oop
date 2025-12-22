@@ -3,6 +3,7 @@ package backend.automaton.base;
 import backend.automaton.IState;
 import backend.automaton.ITransitionTable;
 import backend.automaton.ITransitionTableFactory;
+import backend.useCases.UseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,14 @@ public class BaseTransitionTableFactory implements ITransitionTableFactory {
         // Настройка переходов
         table.get(State.START).put("Помощь", State.HELP);
         table.get(State.HELP).put("Помощь", State.HELP);
+        table.get(State.HELP).put("Создать встречу", State.CREATE_MEETING);
+        table.get(State.HELP).put("Просмотреть встречи", State.VIEW_MEETINGS);
+        table.get(State.HELP).put("Редактировать встречу", State.UPDATE_MEETING);
+        table.get(State.HELP).put("Удалить встречу", State.DELETE_MEETING);
+        table.get(State.CREATE_MEETING).put("Помощь", State.HELP);
+        table.get(State.VIEW_MEETINGS).put("Помощь", State.HELP);
+        table.get(State.DELETE_MEETING).put("Помощь", State.HELP);
+        table.get(State.UPDATE_MEETING).put("Помощь", State.HELP);
 
         // Настройка текстовых описаний состояний
         Map<IState, String> stateText = new HashMap<>();
@@ -39,18 +48,40 @@ public class BaseTransitionTableFactory implements ITransitionTableFactory {
                 Доступные команды:
                 Помощь - показать это сообщение.
                 """);
+        stateText.put(State.CREATE_MEETING, """
+                Временное сообщение для состояния CREATE_MEETING.
+                """);
+        stateText.put(State.VIEW_MEETINGS, """
+                Временное сообщение для состояния VIEW_MEETINGS.
+                """);
+        stateText.put(State.DELETE_MEETING, """
+                Временное сообщение для состояния DELETE_MEETING.
+                """);
+        stateText.put(State.UPDATE_MEETING, """
+                Временное сообщение для состояния UPDATE_MEETING.
+                """);
 
         Map<IState, String[][]> stateTransitions = new HashMap<>();
 
-        stateTransitions.put(State.START, new String[][] {{"Помощь"}});
-        stateTransitions.put(State.HELP, new String[][] {{"Помощь"}});
+        stateTransitions.put(State.START, new String[][]{{"Помощь"}});
+        stateTransitions.put(State.HELP, new String[][]{{"Создать встречу"}, {"Просмотреть встречи"}, {"Редактировать встречу"}, {"Удалить встречу"}, {"Помощь"}});
+        stateTransitions.put(State.CREATE_MEETING, new String[][]{{"Помощь"}});
+        stateTransitions.put(State.VIEW_MEETINGS, new String[][]{{"Помощь"}});
+        stateTransitions.put(State.DELETE_MEETING, new String[][]{{"Помощь"}});
+        stateTransitions.put(State.UPDATE_MEETING, new String[][]{{"Помощь"}});
+
+        Map<IState, UseCase> stateUseCase = new HashMap<>();
+
+        stateUseCase.put(State.CREATE_MEETING, UseCase.CREATE_MEETING);
+        stateUseCase.put(State.VIEW_MEETINGS, UseCase.VIEW_MEETINGS);
+        stateUseCase.put(State.DELETE_MEETING, UseCase.DELETE_MEETING);
+        stateUseCase.put(State.UPDATE_MEETING, UseCase.UPDATE_MEETING);
 
         logger.info("Таблица переходов успешно создана");
-        return new BaseTransitionTable(table, stateText, stateTransitions, State.START);
+        return new BaseTransitionTable(table, stateText, stateTransitions, stateUseCase, State.START);
     }
 
     private enum State implements IState {
-        START,
-        HELP,
+        START, HELP, CREATE_MEETING, DELETE_MEETING, VIEW_MEETINGS, UPDATE_MEETING,
     }
 }

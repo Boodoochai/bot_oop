@@ -1,5 +1,7 @@
 package backend.automaton;
 
+import backend.useCases.UseCase;
+
 public interface ITransitionTable {
     String[][] getTransitions(IState state);
 
@@ -8,4 +10,6 @@ public interface ITransitionTable {
     String getStateText(IState state);
 
     IState getInitialState();
+
+    UseCase getUseCase(IState state);
 }

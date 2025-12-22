@@ -1,5 +1,7 @@
 package backend.automaton;
 
+import backend.useCases.UseCase;
+
 import java.util.List;
 
 public interface IAutomaton {
@@ -8,4 +10,6 @@ public interface IAutomaton {
     void next(String input);
 
     String getStateText();
+
+    UseCase getUseCase();
 }
