@@ -1,7 +1,8 @@
 package backend.requestHandler;
 
 import Identification.ClientIdentificationHandler;
-import backend.automaton.CalendarAutomaton;
+import backend.automaton.IAutomaton;
+import backend.automaton.IAutomatonFactory;
 import model.Client;
 import model.Request;
 import model.Response;
@@ -9,18 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 public final class BaseRequestHandler extends IRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(BaseRequestHandler.class);
-    private final Map<UUID, CalendarAutomaton> machines = new HashMap<>();
+    private final IAutomatonFactory automatonFactory;
 
-    public BaseRequestHandler(IDataStorage dataStorage,
-                              ClientIdentificationHandler clientIdentificationHandler) {
+    public BaseRequestHandler(IDataStorage dataStorage, ClientIdentificationHandler clientIdentificationHandler, IAutomatonFactory automatonFactory) {
         super(dataStorage, clientIdentificationHandler);
-        logger.debug("Инициализирован BaseRequestHandler");
+        this.automatonFactory = automatonFactory;
+        logger.debug("Инициализирован AutomatonRequestHandler");
     }
 
     @Override
@@ -28,15 +25,18 @@ public final class BaseRequestHandler extends IRequestHandler {
         Client owner = request.requestOwner();
         logger.info("Обработка запроса для клиента '{}': '{}'", owner.name(), request.text());
 
-        CalendarAutomaton machine = machines.computeIfAbsent(
-                owner.clientId(),
-                id -> {
-                    logger.debug("Создан новый автомат для клиента: {}", owner.name());
-                    return new CalendarAutomaton(dataStorage, clientIdentificationHandler, owner);
-                }
-        );
+        if (!dataStorage.isExistAutomation(owner.clientId())) {
+            logger.debug("Автомат для клиента '{}' не найден, создаем новый", owner.name());
+            dataStorage.setAutomation(owner.clientId(), automatonFactory.createAutomaton());
+        }
 
-        Response response = machine.feed(request.text());
+        IAutomaton automaton = dataStorage.getAutomation(owner.clientId());
+
+        automaton.next(request.text());
+
+        var options = automaton.getOptions();
+
+        Response response = new Response(automaton.getStateText(), options);
         logger.debug("Получен ответ от автомата для '{}': '{}'", owner.name(), response.text());
 
         return response;

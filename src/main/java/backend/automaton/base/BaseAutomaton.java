@@ -1,9 +1,10 @@
-package backend.automaton;
+package backend.automaton.base;
 
+import backend.automaton.IAutomaton;
+import backend.automaton.IState;
+import backend.automaton.ITransitionTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class BaseAutomaton implements IAutomaton {
     private static final Logger logger = LoggerFactory.getLogger(BaseAutomaton.class);
@@ -18,8 +19,8 @@ public class BaseAutomaton implements IAutomaton {
     }
 
     @Override
-    public List<String> getOptions() {
-        List<String> options = transitionTable.getAcceptableSymbols(currentState);
+    public String[][] getOptions() {
+        String[][] options = transitionTable.getTransitions(currentState);
         logger.debug("Доступные опции в состоянии {}: {}", currentState, options);
         return options;
     }

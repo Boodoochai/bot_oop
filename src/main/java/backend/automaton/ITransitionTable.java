@@ -1,9 +1,7 @@
 package backend.automaton;
 
-import java.util.List;
-
 public interface ITransitionTable {
-    List<String> getAcceptableSymbols(IState state);
+    String[][] getTransitions(IState state);
 
     IState getNextState(IState state, String symbol);
 

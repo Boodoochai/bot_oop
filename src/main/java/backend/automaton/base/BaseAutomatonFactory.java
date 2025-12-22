@@ -1,5 +1,9 @@
-package backend.automaton;
+package backend.automaton.base;
 
+import backend.automaton.IAutomaton;
+import backend.automaton.IAutomatonFactory;
+import backend.automaton.ITransitionTable;
+import backend.automaton.ITransitionTableFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

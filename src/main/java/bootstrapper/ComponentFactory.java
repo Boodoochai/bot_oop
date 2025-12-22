@@ -1,11 +1,11 @@
 package bootstrapper;
 
 import Identification.ClientIdentificationHandler;
-import backend.automaton.BaseAutomatonFactory;
-import backend.automaton.BaseTransitionTableFactory;
+import backend.automaton.base.BaseAutomatonFactory;
+import backend.automaton.base.BaseTransitionTableFactory;
 import backend.automaton.IAutomatonFactory;
 import backend.automaton.ITransitionTableFactory;
-import backend.requestHandler.AutomatonRequestHandler;
+import backend.requestHandler.BaseRequestHandler;
 import backend.requestHandler.DemoRequestHandler;
 import backend.requestHandler.IRequestHandler;
 import config.ApplicationConfig;
@@ -41,7 +41,7 @@ public final class ComponentFactory {
     public IRequestHandler createRequestHandler() {
         ClientIdentificationHandler clientHandler = clientIdentificationHandler;
         IAutomatonFactory automatonFactory = createAutomatonFactory();
-        return config.getMode() == ApplicationConfig.Mode.DEMO ? new DemoRequestHandler(dataStorage, clientHandler) : new AutomatonRequestHandler(dataStorage, clientHandler, automatonFactory);
+        return config.getMode() == ApplicationConfig.Mode.DEMO ? new DemoRequestHandler(dataStorage, clientHandler) : new BaseRequestHandler(dataStorage, clientHandler, automatonFactory);
     }
 
     public AbstractTalker createTalker() {

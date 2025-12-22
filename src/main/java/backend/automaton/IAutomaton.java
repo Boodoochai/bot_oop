@@ -3,7 +3,7 @@ package backend.automaton;
 import java.util.List;
 
 public interface IAutomaton {
-    List<String> getOptions();
+    String[][] getOptions();
 
     void next(String input);
 

@@ -1,10 +1,10 @@
-package backend.automaton;
+package backend.automaton.base;
 
+import backend.automaton.IState;
+import backend.automaton.ITransitionTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,13 +16,14 @@ public class BaseTransitionTable implements ITransitionTable {
 
     private final Map<IState, Map<String, IState>> transitionTable;
     private final Map<IState, String> stateText;
+    private final Map<IState, String[][]> stateTransitions;
     private final IState initialState;
 
-    public BaseTransitionTable(Map<IState, Map<String, IState>> transitionTable,
-                               Map<IState, String> stateText,
-                               IState initialState) {
+    public BaseTransitionTable(Map<IState, Map<String, IState>> transitionTable, Map<IState, String> stateText,
+                               Map<IState, String[][]> stateTransitions, IState initialState) {
         this.transitionTable = transitionTable;
         this.stateText = stateText;
+        this.stateTransitions = stateTransitions;
         this.initialState = initialState;
         logger.debug("Создана таблица переходов с начальным состоянием: {}", initialState);
         if (logger.isTraceEnabled()) {
@@ -31,12 +32,12 @@ public class BaseTransitionTable implements ITransitionTable {
     }
 
     @Override
-    public List<String> getAcceptableSymbols(IState state) {
+    public String[][] getTransitions(IState state) {
         if (!transitionTable.containsKey(state)) {
             logger.warn("Состояние {} отсутствует в таблице переходов", state);
-            return List.of();
+            return null;
         }
-        List<String> symbols = new ArrayList<>(transitionTable.get(state).keySet());
+        String[][] symbols = stateTransitions.get(state);
         logger.debug("Для состояния {} доступны символы: {}", state, symbols);
         return symbols;
     }

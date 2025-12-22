@@ -1,5 +1,8 @@
-package backend.automaton;
+package backend.automaton.base;
 
+import backend.automaton.IState;
+import backend.automaton.ITransitionTable;
+import backend.automaton.ITransitionTableFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +28,8 @@ public class BaseTransitionTableFactory implements ITransitionTableFactory {
         }
 
         // Настройка переходов
-        table.get(State.START).put("help", State.HELP);
-        table.get(State.HELP).put("help", State.HELP);
+        table.get(State.START).put("Помощь", State.HELP);
+        table.get(State.HELP).put("Помощь", State.HELP);
 
         // Настройка текстовых описаний состояний
         Map<IState, String> stateText = new HashMap<>();
@@ -34,11 +37,16 @@ public class BaseTransitionTableFactory implements ITransitionTableFactory {
                 Привет! Я бот для составления расписания.""");
         stateText.put(State.HELP, """
                 Доступные команды:
-                help - показать это сообщение.
+                Помощь - показать это сообщение.
                 """);
 
+        Map<IState, String[][]> stateTransitions = new HashMap<>();
+
+        stateTransitions.put(State.START, new String[][] {{"Помощь"}});
+        stateTransitions.put(State.HELP, new String[][] {{"Помощь"}});
+
         logger.info("Таблица переходов успешно создана");
-        return new BaseTransitionTable(table, stateText, State.START);
+        return new BaseTransitionTable(table, stateText, stateTransitions, State.START);
     }
 
     private enum State implements IState {
