@@ -77,8 +77,14 @@ public class BaseTransitionTableFactory implements ITransitionTableFactory {
         stateUseCase.put(State.DELETE_MEETING, UseCase.DELETE_MEETING);
         stateUseCase.put(State.UPDATE_MEETING, UseCase.UPDATE_MEETING);
 
+        Map<IState, IState> transitionFromUseCase = new HashMap<>();
+        transitionFromUseCase.put(State.CREATE_MEETING, State.HELP);
+        transitionFromUseCase.put(State.DELETE_MEETING, State.HELP);
+        transitionFromUseCase.put(State.UPDATE_MEETING, State.HELP);
+        transitionFromUseCase.put(State.VIEW_MEETINGS, State.HELP);
+
         logger.info("Таблица переходов успешно создана");
-        return new BaseTransitionTable(table, stateText, stateTransitions, stateUseCase, State.START);
+        return new BaseTransitionTable(table, stateText, stateTransitions, stateUseCase, transitionFromUseCase, State.START);
     }
 
     private enum State implements IState {

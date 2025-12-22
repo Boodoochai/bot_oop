@@ -13,6 +13,8 @@ import model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public final class TelegramTalker extends AbstractTalker {
     private static final Logger logger = LoggerFactory.getLogger(TelegramTalker.class);
 
@@ -57,10 +59,12 @@ public final class TelegramTalker extends AbstractTalker {
                                 requestText
                         );
 
-                        Response response = requestHandler.handleRequest(request);
-                        logger.debug("Сформирован ответ для '{}': '{}'", userName, response.text());
+                        List<Response> response = requestHandler.handleRequest(request);
 
-                        sendResponse(update, response);
+                        for (Response resp : response) {
+                            logger.debug("Сформирован ответ для '{}': '{}'", userName, resp.text());
+                            sendResponse(update, resp);
+                        }
                     }
                 }
 
@@ -103,7 +107,7 @@ public final class TelegramTalker extends AbstractTalker {
         try {
             var options = response.options();
             if (options != null) {
-                ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(options).resizeKeyboard(true);
+                ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup(options).resizeKeyboard(true).oneTimeKeyboard(response.isTempOptions());
                 bot.execute(new SendMessage(update.message().chat().id(), response.text()).replyMarkup(keyboard));
                 logger.debug("Отправлен ответ с кнопками пользователю: {}", update.message().chat().id());
             } else {

@@ -12,4 +12,6 @@ public interface ITransitionTable {
     IState getInitialState();
 
     UseCase getUseCase(IState state);
+
+    IState getTransitionFromUseCase(IState state);
 }

@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 final public class DemoRequestHandler implements IRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(DemoRequestHandler.class);
     final IDataStorage dataStorage;
@@ -19,13 +22,14 @@ final public class DemoRequestHandler implements IRequestHandler {
     }
 
     @Override
-    public Response handleRequest(final Request request) {
+    public List<Response> handleRequest(final Request request) {
         logger.info("Обработка запроса в режиме демо: клиент='{}', текст='{}'",
                 request.requestOwner().name(), request.text());
 
         final String res = request.requestOwner().clientId().toString();
 
         logger.debug("Сформирован демо-ответ: {}", res);
-        return new Response(res);
+        Response response = new Response(res);
+        return List.of(response);
     }
 }

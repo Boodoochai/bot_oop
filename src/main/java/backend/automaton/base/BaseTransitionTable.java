@@ -19,16 +19,18 @@ public class BaseTransitionTable implements ITransitionTable {
     private final Map<IState, String> stateText;
     private final Map<IState, String[][]> stateTransitions;
     private final Map<IState, UseCase> stateUseCase;
+    private final Map<IState, IState> transitionFromUseCase;
     private final IState initialState;
 
     public BaseTransitionTable(Map<IState, Map<String, IState>> transitionTable, Map<IState, String> stateText,
                                Map<IState, String[][]> stateTransitions, Map<IState, UseCase> stateUseCase,
-                               IState initialState) {
+                               Map<IState, IState> transitionFromUseCase, IState initialState) {
         this.transitionTable = transitionTable;
         this.stateText = stateText;
         this.stateTransitions = stateTransitions;
         this.initialState = initialState;
         this.stateUseCase = stateUseCase;
+        this.transitionFromUseCase = transitionFromUseCase;
         logger.debug("Создана таблица переходов с начальным состоянием: {}", initialState);
         if (logger.isTraceEnabled()) {
             logger.trace("Полная таблица переходов: {}", transitionTable);
@@ -85,5 +87,10 @@ public class BaseTransitionTable implements ITransitionTable {
     @Override
     public UseCase getUseCase(IState state) {
         return stateUseCase.get(state);
+    }
+
+    @Override
+    public IState getTransitionFromUseCase(IState state) {
+        return transitionFromUseCase.get(state);
     }
 }

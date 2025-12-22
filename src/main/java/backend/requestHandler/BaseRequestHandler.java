@@ -12,6 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
 public final class BaseRequestHandler implements IRequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(BaseRequestHandler.class);
 
@@ -29,7 +33,7 @@ public final class BaseRequestHandler implements IRequestHandler {
     }
 
     @Override
-    public Response handleRequest(final Request request) {
+    public List<Response> handleRequest(final Request request) {
         Client owner = request.requestOwner();
         logger.info("Обработка запроса для клиента '{}': '{}'", owner.name(), request.text());
 
@@ -52,6 +56,7 @@ public final class BaseRequestHandler implements IRequestHandler {
         }
 
         Response response = null;
+        Response secondResponse = null;
 
         if (automaton.getUseCase() == null) {
             var options = automaton.getOptions();
@@ -65,7 +70,7 @@ public final class BaseRequestHandler implements IRequestHandler {
                 IUseCaseHandler useCaseHandler = useCaseProvider.getUseCaseHandler(automaton.getUseCase());
                 if (useCaseHandler == null) {
                     logger.error("Провайдер не вернул обработчик для use case: {}", automaton.getUseCase().name());
-                    return new Response("Ошибка обработки запроса. Повторите попытку.");
+                    return List.of(new Response("Ошибка обработки запроса. Повторите попытку."));
                 }
                 dataStorage.setUseCaseHandler(owner.clientId(), useCaseHandler);
                 logger.info("Обработчик {} установлен для клиента '{}'", useCaseHandler.getClass().getSimpleName(), owner.name());
@@ -73,18 +78,24 @@ public final class BaseRequestHandler implements IRequestHandler {
 
             IUseCaseHandler useCaseHandler = dataStorage.getUseCaseHandler(owner.clientId());
             logger.debug("Выполнение обработчика сценария: {}", useCaseHandler.getClass().getSimpleName());
-            response = useCaseHandler.handleRequest(request, dataStorage);
+            response = useCaseHandler.handleRequest(request, dataStorage, clientIdentificationHandler);
 
             if (useCaseHandler.isDone()) {
                 logger.info("Обработчик сценария использования завершил работу для клиента '{}'", owner.name());
                 automaton.useCaseDone();
                 logger.debug("Состояние автомата сброшено после завершения сценария");
+                dataStorage.deleteUseCaseHandler(owner.clientId());
+                //TODO: убрать дублирование кода
+                var options = automaton.getOptions();
+                logger.debug("Автомат не связан с use case, формируем ответ с опциями: {}", options);
+                secondResponse = new Response(automaton.getStateText(), options);
+                logger.debug("Получен ответ от автомата для '{}': '{}'", owner.name(), response.text());
             } else {
-                logger.debug("Сценарий использования ещё не завершён, состояние сохранено");
+                logger.debug("Сценарий использования ещё не завершён");
             }
         }
 
         logger.debug("Формирование окончательного ответа для клиента '{}'", owner.name());
-        return response;
+        return Stream.of(response, secondResponse).filter(Objects::nonNull).toList();
     }
 }

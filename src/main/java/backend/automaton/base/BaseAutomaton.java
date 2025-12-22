@@ -52,6 +52,6 @@ public class BaseAutomaton implements IAutomaton {
 
     @Override
     public void useCaseDone() {
-
+        currentState = transitionTable.getTransitionFromUseCase(currentState);
     }
 }

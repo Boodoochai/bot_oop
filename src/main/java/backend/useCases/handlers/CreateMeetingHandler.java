@@ -1,5 +1,6 @@
 package backend.useCases.handlers;
 
+import Identification.ClientIdentificationHandler;
 import backend.textProcessors.DateProcessor;
 import backend.textProcessors.TimeProcessor;
 import model.Client;
@@ -26,7 +27,7 @@ public class CreateMeetingHandler implements IUseCaseHandler {
     Duration duration = null;
 
     @Override
-    public Response handleRequest(Request request, IDataStorage dataStorage) {
+    public Response handleRequest(Request request, IDataStorage dataStorage, ClientIdentificationHandler clientIdentificationHandler) {
         if (state == 0) {
             state++;
             return new Response("Введите название встречи");
@@ -54,7 +55,7 @@ public class CreateMeetingHandler implements IUseCaseHandler {
             }
             time = TimeProcessor.getTime(request.text());
             state++;
-            return new Response("Введите продолжительность встречи в формате ЧЧ:ММ");
+            return new Response("Введите продолжительность встречи в формате ЧЧ:ММ", new String[][]{{"00:30"}, {"1:00"}, {"1:30"}, {"2:00"}});
         } else if (state == 4) {
             String text = request.text();
             if (!TimeProcessor.isTime(text)) {
@@ -68,11 +69,12 @@ public class CreateMeetingHandler implements IUseCaseHandler {
         } else if (state == 5) {
             participants = new HashSet<>();
             participants.add(request.requestOwner());
-            participants.add(dataStorage.clientByName(request.text()));
+            participants.add(clientIdentificationHandler.getClient(request.text()));
 
             dataStorage.addMeeting(new Meeting(title, LocalDateTime.of(date, time), LocalDateTime.of(date, time).plusSeconds(duration.getSeconds()), participants, ""));
 
             state++;
+            isDone = true;
         }
 
         return new Response("Добавление встречи завершено.");
