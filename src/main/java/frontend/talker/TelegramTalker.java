@@ -21,9 +21,7 @@ public final class TelegramTalker extends AbstractTalker {
     private final TelegramBot bot;
     private int offset = 0;
 
-    public TelegramTalker(ClientIdentificationHandler clientIdentificationHandler,
-                          IRequestHandler requestHandler,
-                          String botToken) {
+    public TelegramTalker(ClientIdentificationHandler clientIdentificationHandler, IRequestHandler requestHandler, String botToken) {
         super(clientIdentificationHandler, requestHandler);
         this.bot = new TelegramBot(botToken);
         logger.info("Инициализирован TelegramTalker для бота");
@@ -34,9 +32,7 @@ public final class TelegramTalker extends AbstractTalker {
         logger.info("Запущен Telegram бот. Ожидание обновлений...");
         while (true) {
             try {
-                GetUpdatesResponse updatesResponse = bot.execute(
-                        new GetUpdates().limit(100).offset(offset)
-                );
+                GetUpdatesResponse updatesResponse = bot.execute(new GetUpdates().limit(100).offset(offset));
 
                 if (updatesResponse == null || updatesResponse.updates() == null) {
                     logger.debug("Получен null-ответ от Telegram API, пропуск итерации");
@@ -47,17 +43,13 @@ public final class TelegramTalker extends AbstractTalker {
                 for (Update update : updatesResponse.updates()) {
                     offset = update.updateId() + 1;
                     logger.debug("Получено обновление от Telegram: updateId={}", update.updateId());
-
                     if (update.message() != null && update.message().text() != null) {
-                        String userName = getUserName(update);
+                        String userName = getUserId(update);
                         String requestText = update.message().text();
 
                         logger.debug("Обработка запроса от пользователя: '{}' → текст: '{}'", userName, requestText);
 
-                        Request request = new Request(
-                                clientIdentificationHandler.getClient(userName),
-                                requestText
-                        );
+                        Request request = new Request(clientIdentificationHandler.getClient(userName), requestText);
 
                         List<Response> response = requestHandler.handleRequest(request);
 
@@ -68,17 +60,21 @@ public final class TelegramTalker extends AbstractTalker {
                     }
                 }
 
-                Thread.sleep(1000);
+                Thread.sleep(1);
             } catch (Exception e) {
                 logger.error("Неожиданная ошибка в polling-цикле Telegram бота", e);
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1);
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                     logger.warn("Поток TelegramTalker был прерван во время ожидания");
                 }
             }
         }
+    }
+
+    private String getUserId(Update update) {
+        return "telegram_id_" + update.message().from().id().toString();
     }
 
     private String getUserName(Update update) {
