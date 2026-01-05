@@ -32,22 +32,72 @@ public final class BaseRequestHandler implements IRequestHandler {
         logger.info("Инициализирован BaseRequestHandler с automatonFactory: {} и useCaseProvider: {}", automatonFactory.getClass().getSimpleName(), useCaseProvider.getClass().getSimpleName());
     }
 
+    private IAutomaton getOrCreateClientAutomaton(final IDataStorage dataStorage, final Client client) {
+        if (!dataStorage.isExistAutomation(client.clientId())) {
+            logger.debug("Автомат для клиента '{}' не найден, создаем новый", client.name());
+            IAutomaton newAutomaton = automatonFactory.createAutomaton();
+            dataStorage.setAutomation(client.clientId(), newAutomaton);
+            logger.info("Автомат {} установлен для клиента '{}'", newAutomaton.getClass().getSimpleName(), client.name());
+        } else {
+            logger.debug("Используется существующий автомат для клиента '{}'", client.name());
+        }
+
+        return dataStorage.getAutomation(client.clientId());
+    }
+
+    private IUseCaseHandler getOrCreateUseCaseHandler(final IDataStorage dataStorage, final Client client, final IAutomaton automaton) {
+        if (!dataStorage.isExistUseCaseHandler(client.clientId())) {
+            logger.debug("Обработчик сценария для клиента '{}' не найден, получаем из провайдера", client.name());
+            IUseCaseHandler useCaseHandler = useCaseProvider.getUseCaseHandler(automaton.getUseCase());
+            if (useCaseHandler == null) {
+                logger.error("Провайдер не вернул обработчик для use case: {}", automaton.getUseCase().name());
+                return null;
+            }
+            dataStorage.setUseCaseHandler(client.clientId(), useCaseHandler);
+            logger.info("Обработчик {} установлен для клиента '{}'", useCaseHandler.getClass().getSimpleName(), client.name());
+        }
+        return dataStorage.getUseCaseHandler(client.clientId());
+    }
+
+    private Response standardResponse(IAutomaton automaton) {
+        var options = automaton.getOptions();
+        logger.debug("Автомат не связан с use case, формируем ответ с опциями: {}", (Object) options);
+        Response response = new Response(automaton.getStateText(), options);
+        logger.debug("Получен ответ от автомата: '{}'", response.text());
+        return response;
+    }
+
+    private List<Response> handleUseCase(final Request request, final Client client, IAutomaton automaton) {
+        logger.info("Обнаружен сценарий использования: {}", automaton.getUseCase().name());
+        IUseCaseHandler useCaseHandler = getOrCreateUseCaseHandler(dataStorage, client, automaton);
+        if (useCaseHandler == null) {
+            return List.of(new Response("Ошибка обработки запроса. Повторите попытку."));
+        }
+
+        logger.debug("Выполнение обработчика сценария: {}", useCaseHandler.getClass().getSimpleName());
+        Response response = useCaseHandler.handleRequest(request, dataStorage, clientIdentificationHandler);
+
+        Response secondResponse = null;
+        if (useCaseHandler.isDone()) {
+            logger.info("Обработчик сценария использования завершил работу для клиента '{}'", client.name());
+            automaton.useCaseDone();
+            logger.debug("Состояние автомата сброшено после завершения сценария");
+            dataStorage.deleteUseCaseHandler(client.clientId());
+            secondResponse = standardResponse(automaton);
+        } else {
+            logger.debug("Сценарий использования ещё не завершён");
+        }
+
+        logger.debug("Формирование окончательного ответа для клиента '{}'", client.name());
+        return Stream.of(response, secondResponse).filter(Objects::nonNull).toList();
+    }
+
     @Override
     public List<Response> handleRequest(final Request request) {
         Client owner = request.requestOwner();
         logger.info("Обработка запроса для клиента '{}': '{}'", owner.name(), request.text());
 
-        if (!dataStorage.isExistAutomation(owner.clientId())) {
-            logger.debug("Автомат для клиента '{}' не найден, создаем новый", owner.name());
-            IAutomaton newAutomaton = automatonFactory.createAutomaton();
-            dataStorage.setAutomation(owner.clientId(), newAutomaton);
-            logger.info("Автомат {} установлен для клиента '{}'", newAutomaton.getClass().getSimpleName(), owner.name());
-        } else {
-            logger.debug("Используется существующий автомат для клиента '{}'", owner.name());
-        }
-
-        IAutomaton automaton = dataStorage.getAutomation(owner.clientId());
-
+        IAutomaton automaton = getOrCreateClientAutomaton(dataStorage, owner);
         logger.debug("Текущее состояние автомата: {}", automaton.getClass().getSimpleName());
 
         if (automaton.getUseCase() == null) {
@@ -55,47 +105,10 @@ public final class BaseRequestHandler implements IRequestHandler {
             logger.debug("Выполнен переход в автомате для клиента '{}'", owner.name());
         }
 
-        Response response = null;
-        Response secondResponse = null;
-
         if (automaton.getUseCase() == null) {
-            var options = automaton.getOptions();
-            logger.debug("Автомат не связан с use case, формируем ответ с опциями: {}", options);
-            response = new Response(automaton.getStateText(), options);
-            logger.debug("Получен ответ от автомата для '{}': '{}'", owner.name(), response.text());
+            return List.of(standardResponse(automaton));
         } else {
-            logger.info("Обнаружен сценарий использования: {}", automaton.getUseCase().name());
-            if (!dataStorage.isExistUseCaseHandler(owner.clientId())) {
-                logger.debug("Обработчик сценария для клиента '{}' не найден, получаем из провайдера", owner.name());
-                IUseCaseHandler useCaseHandler = useCaseProvider.getUseCaseHandler(automaton.getUseCase());
-                if (useCaseHandler == null) {
-                    logger.error("Провайдер не вернул обработчик для use case: {}", automaton.getUseCase().name());
-                    return List.of(new Response("Ошибка обработки запроса. Повторите попытку."));
-                }
-                dataStorage.setUseCaseHandler(owner.clientId(), useCaseHandler);
-                logger.info("Обработчик {} установлен для клиента '{}'", useCaseHandler.getClass().getSimpleName(), owner.name());
-            }
-
-            IUseCaseHandler useCaseHandler = dataStorage.getUseCaseHandler(owner.clientId());
-            logger.debug("Выполнение обработчика сценария: {}", useCaseHandler.getClass().getSimpleName());
-            response = useCaseHandler.handleRequest(request, dataStorage, clientIdentificationHandler);
-
-            if (useCaseHandler.isDone()) {
-                logger.info("Обработчик сценария использования завершил работу для клиента '{}'", owner.name());
-                automaton.useCaseDone();
-                logger.debug("Состояние автомата сброшено после завершения сценария");
-                dataStorage.deleteUseCaseHandler(owner.clientId());
-                //TODO: убрать дублирование кода
-                var options = automaton.getOptions();
-                logger.debug("Автомат не связан с use case, формируем ответ с опциями: {}", options);
-                secondResponse = new Response(automaton.getStateText(), options);
-                logger.debug("Получен ответ от автомата для '{}': '{}'", owner.name(), response.text());
-            } else {
-                logger.debug("Сценарий использования ещё не завершён");
-            }
+            return handleUseCase(request, owner, automaton);
         }
-
-        logger.debug("Формирование окончательного ответа для клиента '{}'", owner.name());
-        return Stream.of(response, secondResponse).filter(Objects::nonNull).toList();
     }
 }
