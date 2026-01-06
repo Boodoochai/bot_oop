@@ -35,11 +35,12 @@ class JulLogger implements ILogger {
 
     @Override
     public void debug(String message, Object... args) {
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(
-                    MessageFormatter.format(message, args)
-            );
+        if (!logger.isLoggable(Level.FINE)) {
+            return;
         }
+
+        LogCall call = LogCall.of(message, args);
+        logger.fine(call.formattedMessage());
     }
 
     // ---------- INFO ----------
@@ -53,11 +54,12 @@ class JulLogger implements ILogger {
 
     @Override
     public void info(String message, Object... args) {
-        if (logger.isLoggable(Level.INFO)) {
-            logger.info(
-                    MessageFormatter.format(message, args)
-            );
+        if (!logger.isLoggable(Level.INFO)) {
+            return;
         }
+
+        LogCall call = LogCall.of(message, args);
+        logger.info(call.formattedMessage());
     }
 
     // ---------- WARNING ----------
@@ -71,11 +73,12 @@ class JulLogger implements ILogger {
 
     @Override
     public void warn(String message, Object... args) {
-        if (logger.isLoggable(Level.WARNING)) {
-            logger.warning(
-                    MessageFormatter.format(message, args)
-            );
+        if (!logger.isLoggable(Level.WARNING)) {
+            return;
         }
+
+        LogCall call = LogCall.of(message, args);
+        logger.warning(call.formattedMessage());
     }
 
     // ---------- ERROR ----------
@@ -88,20 +91,17 @@ class JulLogger implements ILogger {
     }
 
     @Override
-    public void error(String message, Throwable t) {
-        if (logger.isLoggable(Level.SEVERE)) {
-            logger.log(Level.SEVERE, message, t);
+    public void error(String message, Object... args) {
+        if (!logger.isLoggable(Level.SEVERE)) {
+            return;
         }
-    }
 
-    @Override
-    public void error(String message, Throwable t, Object... args) {
-        if (logger.isLoggable(Level.SEVERE)) {
-            logger.log(
-                    Level.SEVERE,
-                    MessageFormatter.format(message, args),
-                    t
-            );
+        LogCall call = LogCall.of(message, args);
+
+        if (call.throwable() != null) {
+            logger.log(Level.SEVERE, call.formattedMessage(), call.throwable());
+        } else {
+            logger.severe(call.formattedMessage());
         }
     }
 
@@ -113,12 +113,7 @@ class JulLogger implements ILogger {
     }
 
     @Override
-    public void crit(String message, Throwable t) {
-        error("[CRITICAL] " + message, t);
-    }
-
-    @Override
-    public void crit(String message, Throwable t, Object... args) {
-        error("[CRITICAL] " + message, t, args);
+    public void crit(String message, Object... args) {
+        error("[CRITICAL] " + message, args);
     }
 }

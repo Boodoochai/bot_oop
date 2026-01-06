@@ -18,10 +18,8 @@ public interface ILogger {
     void warn(String message, Object... args);
 
     void error(String message);
-    void error(String message, Throwable t);
-    void error(String message, Throwable t, Object... args);
+    void error(String message, Object... args);
 
     void crit(String message);
-    void crit(String message, Throwable t);
-    void crit(String message, Throwable t, Object... args);
+    void crit(String message, Object... args);
 }
