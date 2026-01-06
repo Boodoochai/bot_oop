@@ -1,14 +1,14 @@
 package Identification;
 
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import model.Client;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
 import java.util.UUID;
 
 final public class ClientIdentificationHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ClientIdentificationHandler.class);
+    private static final ILogger logger = LoggerProvider.get(ClientIdentificationHandler.class);
 
     private final IDataStorage dataStorage;
 

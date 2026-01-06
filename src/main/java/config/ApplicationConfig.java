@@ -1,7 +1,7 @@
 package config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 
 import java.util.Objects;
 
@@ -9,7 +9,7 @@ import java.util.Objects;
  * Немутабельная конфигурация приложения.
  */
 public final class ApplicationConfig {
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
+    private static final ILogger logger = LoggerProvider.get(ApplicationConfig.class);
 
     private final Mode mode;
     private final Interface iface;

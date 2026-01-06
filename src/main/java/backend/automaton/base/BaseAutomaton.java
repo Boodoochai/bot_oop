@@ -1,14 +1,14 @@
 package backend.automaton.base;
 
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.automaton.IAutomaton;
 import backend.automaton.IState;
 import backend.automaton.ITransitionTable;
 import backend.useCases.UseCase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BaseAutomaton implements IAutomaton {
-    private static final Logger logger = LoggerFactory.getLogger(BaseAutomaton.class);
+    private static final ILogger logger = LoggerProvider.get(BaseAutomaton.class);
 
     private final ITransitionTable transitionTable;
     private IState currentState;

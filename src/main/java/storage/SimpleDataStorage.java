@@ -1,17 +1,17 @@
 package storage;
 
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.automaton.IAutomaton;
 import backend.useCases.handlers.IUseCaseHandler;
 import model.Client;
 import model.Meeting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 final public class SimpleDataStorage implements IDataStorage {
-    private static final Logger logger = LoggerFactory.getLogger(SimpleDataStorage.class);
+    private static final ILogger logger = LoggerProvider.get(SimpleDataStorage.class);
 
     private final Map<UUID, Client> clientByUUID;
     private final Map<String, Client> clientByName;

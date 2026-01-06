@@ -1,5 +1,5 @@
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import runner.ApplicationRunner;
 
 import java.util.function.Supplier;
@@ -9,7 +9,7 @@ import java.util.function.Supplier;
  * Не содержит логики запуска.
  */
 public final class App {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    private static final ILogger logger = LoggerProvider.get(App.class);
 
     private final Supplier<ApplicationRunner> runnerSupplier;
 

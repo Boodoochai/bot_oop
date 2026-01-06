@@ -1,7 +1,8 @@
 package backend.textProcessors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import Logger.ILogger;
+import Logger.LoggerProvider;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -12,7 +13,7 @@ import java.time.temporal.ChronoField;
 
 public class DateProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(DateProcessor.class);
+    private static final ILogger logger = LoggerProvider.get(DateProcessor.class);
 
     private static final DateTimeFormatter FULL_DATE =
             DateTimeFormatter.ofPattern("dd.MM.yyyy");

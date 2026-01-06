@@ -1,11 +1,11 @@
 package backend.automaton.base;
 
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.automaton.IState;
 import backend.automaton.ITransitionTable;
 import backend.automaton.ITransitionTableFactory;
 import backend.useCases.UseCase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
  * Определяет доступные команды и переходы между состояниями.
  */
 public class BaseTransitionTableFactory implements ITransitionTableFactory {
-    private static final Logger logger = LoggerFactory.getLogger(BaseTransitionTableFactory.class);
+    private static final ILogger logger = LoggerProvider.get(BaseTransitionTableFactory.class);
 
     @Override
     public ITransitionTable createTransitionTable() {

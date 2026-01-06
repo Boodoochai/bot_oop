@@ -1,9 +1,9 @@
 package bootstrapper;
 
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import config.ApplicationConfig;
 import frontend.talker.AbstractTalker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import runner.ApplicationRunner;
 import runner.DefaultApplicationRunner;
 
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * Собирает все компоненты приложения.
  */
 public final class ApplicationBootstrapper {
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationBootstrapper.class);
+    private static final ILogger logger = LoggerProvider.get(ApplicationBootstrapper.class);
 
     public Supplier<ApplicationRunner> createRunnerSupplier(String[] args) {
         logger.info("Создание supplier'а для ApplicationRunner");

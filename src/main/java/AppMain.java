@@ -1,12 +1,12 @@
 import bootstrapper.ApplicationBootstrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import runner.ApplicationRunner;
 
 import java.util.function.Supplier;
 
 public final class AppMain {
-    private static final Logger logger = LoggerFactory.getLogger(AppMain.class);
+    private static final ILogger logger = LoggerProvider.get(AppMain.class);
 
     public static void main(String[] args) {
         logger.info("Запуск приложения...");

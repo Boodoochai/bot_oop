@@ -1,6 +1,8 @@
 package frontend.talker;
 
 import Identification.ClientIdentificationHandler;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.requestHandler.IRequestHandler;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -10,13 +12,11 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 import model.Request;
 import model.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public final class TelegramTalker extends AbstractTalker {
-    private static final Logger logger = LoggerFactory.getLogger(TelegramTalker.class);
+    private static final ILogger logger = LoggerProvider.get(TelegramTalker.class);
 
     private final TelegramBot bot;
     private int offset = 0;

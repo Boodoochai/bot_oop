@@ -1,6 +1,8 @@
 package backend.requestHandler;
 
 import Identification.ClientIdentificationHandler;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.automaton.IAutomaton;
 import backend.automaton.IAutomatonFactory;
 import backend.useCases.handlers.IUseCaseHandler;
@@ -8,8 +10,6 @@ import backend.useCases.providers.IUseCaseProvider;
 import model.Client;
 import model.Request;
 import model.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class BaseRequestHandler implements IRequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(BaseRequestHandler.class);
+    private static final ILogger logger = LoggerProvider.get(BaseRequestHandler.class);
 
     final IDataStorage dataStorage;
     final ClientIdentificationHandler clientIdentificationHandler;

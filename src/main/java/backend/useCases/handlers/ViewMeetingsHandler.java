@@ -1,13 +1,13 @@
 package backend.useCases.handlers;
 
 import Identification.ClientIdentificationHandler;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.textProcessors.DateProcessor;
 import model.Client;
 import model.Meeting;
 import model.Request;
 import model.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ViewMeetingsHandler implements IUseCaseHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ViewMeetingsHandler.class);
+    private static final ILogger logger = LoggerProvider.get(ViewMeetingsHandler.class);
 
     private int state = 0;
     private boolean isDone = false;

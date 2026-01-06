@@ -1,7 +1,8 @@
 package backend.textProcessors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import Logger.ILogger;
+import Logger.LoggerProvider;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +12,7 @@ import java.time.temporal.ChronoField;
 
 public class TimeProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(TimeProcessor.class);
+    private static final ILogger logger = LoggerProvider.get(TimeProcessor.class);
 
     private static final DateTimeFormatter HH_MM =
             DateTimeFormatter.ofPattern("H:mm");

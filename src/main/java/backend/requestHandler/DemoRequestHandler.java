@@ -1,17 +1,16 @@
 package backend.requestHandler;
 
 import Identification.ClientIdentificationHandler;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import model.Request;
 import model.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import storage.IDataStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 final public class DemoRequestHandler implements IRequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(DemoRequestHandler.class);
+    private static final ILogger logger = LoggerProvider.get(DemoRequestHandler.class);
     final IDataStorage dataStorage;
     final ClientIdentificationHandler clientIdentificationHandler;
 

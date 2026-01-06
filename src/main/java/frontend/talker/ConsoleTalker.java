@@ -1,17 +1,17 @@
 package frontend.talker;
 
 import Identification.ClientIdentificationHandler;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.requestHandler.IRequestHandler;
 import model.Client;
 import model.Request;
 import model.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
 final public class ConsoleTalker extends AbstractTalker {
-    private static final Logger logger = LoggerFactory.getLogger(ConsoleTalker.class);
+    private static final ILogger logger = LoggerProvider.get(ConsoleTalker.class);
 
     public ConsoleTalker(final ClientIdentificationHandler clientIdentificationHandler, final IRequestHandler requestHandler) {
         super(clientIdentificationHandler, requestHandler);

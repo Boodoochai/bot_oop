@@ -1,9 +1,9 @@
 package frontend.talker;
 
 import Identification.ClientIdentificationHandler;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.requestHandler.IRequestHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Базовый класс для всех способов взаимодействия с пользователем.
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTalker {
     protected final ClientIdentificationHandler clientIdentificationHandler;
     protected final IRequestHandler requestHandler;
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final ILogger logger = LoggerProvider.get(this.getClass());
 
     public AbstractTalker(ClientIdentificationHandler clientIdentificationHandler,
                           IRequestHandler requestHandler) {

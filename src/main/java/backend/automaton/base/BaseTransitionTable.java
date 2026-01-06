@@ -1,10 +1,10 @@
 package backend.automaton.base;
 
+import Logger.ILogger;
+import Logger.LoggerProvider;
 import backend.automaton.IState;
 import backend.automaton.ITransitionTable;
 import backend.useCases.UseCase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * Хранит переходы между состояниями и текстовые описания состояний.
  */
 public class BaseTransitionTable implements ITransitionTable {
-    private static final Logger logger = LoggerFactory.getLogger(BaseTransitionTable.class);
+    private static final ILogger logger = LoggerProvider.get(BaseTransitionTable.class);
 
     private final Map<IState, Map<String, IState>> transitionTable;
     private final Map<IState, String> stateText;
@@ -32,9 +32,7 @@ public class BaseTransitionTable implements ITransitionTable {
         this.stateUseCase = stateUseCase;
         this.transitionFromUseCase = transitionFromUseCase;
         logger.debug("Создана таблица переходов с начальным состоянием: {}", initialState);
-        if (logger.isTraceEnabled()) {
-            logger.trace("Полная таблица переходов: {}", transitionTable);
-        }
+        logger.trace("Полная таблица переходов: {}", transitionTable);
     }
 
     @Override

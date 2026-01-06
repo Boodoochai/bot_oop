@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Реализация runner.ApplicationRunner.
+ * Реализация интерфейса для запуска приложения.
  */
 public final class DefaultApplicationRunner implements ApplicationRunner {
     private static final Logger logger = LoggerFactory.getLogger(DefaultApplicationRunner.class);
