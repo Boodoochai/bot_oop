@@ -2,8 +2,6 @@ import Logger.ILogger;
 import Logger.LoggerProvider;
 import runner.ApplicationRunner;
 
-import java.util.function.Supplier;
-
 /**
  * Основной класс приложения. Полностью зависит от внедрённых зависимостей.
  * Не содержит логики запуска.
