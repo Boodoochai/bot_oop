@@ -14,43 +14,111 @@ class JulLogger implements ILogger {
         this.logger = logger;
     }
 
+    // ---------- TRACE / DEBUG ----------
+
     @Override
     public void trace(String message) {
-        logger.fine(message);
+        debug(message);
+    }
+
+    @Override
+    public void trace(String message, Object... args) {
+        debug(message, args);
     }
 
     @Override
     public void debug(String message) {
-        logger.fine(message);
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine(message);
+        }
     }
+
+    @Override
+    public void debug(String message, Object... args) {
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine(
+                    MessageFormatter.format(message, args)
+            );
+        }
+    }
+
+    // ---------- INFO ----------
 
     @Override
     public void info(String message) {
-        logger.info(message);
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info(message);
+        }
     }
 
     @Override
-    public void warning(String message) {
-        logger.warning(message);
+    public void info(String message, Object... args) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info(
+                    MessageFormatter.format(message, args)
+            );
+        }
     }
+
+    // ---------- WARNING ----------
+
+    @Override
+    public void warn(String message) {
+        if (logger.isLoggable(Level.WARNING)) {
+            logger.warning(message);
+        }
+    }
+
+    @Override
+    public void warn(String message, Object... args) {
+        if (logger.isLoggable(Level.WARNING)) {
+            logger.warning(
+                    MessageFormatter.format(message, args)
+            );
+        }
+    }
+
+    // ---------- ERROR ----------
 
     @Override
     public void error(String message) {
-        logger.severe(message);
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.severe(message);
+        }
     }
 
     @Override
-    public void error(String message, Exception e) {
-        logger.log(Level.SEVERE, message, e);
+    public void error(String message, Throwable t) {
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.log(Level.SEVERE, message, t);
+        }
     }
 
     @Override
-    public void critical(String message) {
-        logger.severe("[CRITICAL] " + message);
+    public void error(String message, Throwable t, Object... args) {
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.log(
+                    Level.SEVERE,
+                    MessageFormatter.format(message, args),
+                    t
+            );
+        }
+    }
+
+    // ---------- CRITICAL ----------
+
+    @Override
+    public void crit(String message) {
+        error("[CRITICAL] " + message);
     }
 
     @Override
-    public void critical(String message, Exception e) {
-        logger.log(Level.SEVERE, "[CRITICAL] " + message, e);
+    public void crit(String message, Throwable t) {
+        error("[CRITICAL] " + message, t);
+    }
+
+    @Override
+    public void crit(String message, Throwable t, Object... args) {
+        error("[CRITICAL] " + message, t, args);
     }
 }
