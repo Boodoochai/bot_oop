@@ -11,10 +11,10 @@ import java.util.function.Supplier;
 public final class App {
     private static final ILogger logger = LoggerProvider.get(App.class);
 
-    private final Supplier<ApplicationRunner> runnerSupplier;
+    private final ApplicationRunner runner;
 
-    public App(Supplier<ApplicationRunner> runnerSupplier) {
-        this.runnerSupplier = runnerSupplier;
+    public App(ApplicationRunner runner) {
+        this.runner = runner;
         logger.debug("Создан экземпляр App с runnerSupplier");
     }
 
@@ -23,7 +23,6 @@ public final class App {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> logger.info("Приложение остановлено")));
 
         try {
-            ApplicationRunner runner = runnerSupplier.get();
             logger.debug("Получен runner, запускаем...");
             runner.run();
         } catch (Exception e) {

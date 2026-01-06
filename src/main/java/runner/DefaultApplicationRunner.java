@@ -1,14 +1,14 @@
 package runner;
 
 import frontend.talker.AbstractTalker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import Logger.ILogger;
+import Logger.LoggerProvider;
 
 /**
  * Реализация интерфейса для запуска приложения.
  */
 public final class DefaultApplicationRunner implements ApplicationRunner {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultApplicationRunner.class);
+    private static final ILogger logger = LoggerProvider.get(DefaultApplicationRunner.class);
 
     private final AbstractTalker talker;
 

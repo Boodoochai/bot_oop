@@ -7,36 +7,32 @@ import frontend.talker.AbstractTalker;
 import runner.ApplicationRunner;
 import runner.DefaultApplicationRunner;
 
-import java.util.function.Supplier;
-
 /**
  * Собирает все компоненты приложения.
  */
 public final class ApplicationBootstrapper {
     private static final ILogger logger = LoggerProvider.get(ApplicationBootstrapper.class);
 
-    public Supplier<ApplicationRunner> createRunnerSupplier(String[] args) {
-        logger.info("Создание supplier'а для ApplicationRunner");
+    public ApplicationRunner createRunner(String[] args) {
+        logger.info("Создание ApplicationRunner");
         logArgs(args);
 
-        return () -> {
-            try {
-                ApplicationConfig config = parseArgs(args);
-                logger.debug("Конфигурация успешно распаршена: mode={}, interface={}",
-                        config.getMode(), config.getInterface());
+        try {
+            ApplicationConfig config = parseArgs(args);
+            logger.debug("Конфигурация успешно распаршена: mode={}, interface={}",
+                    config.getMode(), config.getInterface());
 
-                ComponentFactory factory = new ComponentFactory(config);
-                logger.debug("Создана фабрика компонентов");
+            ComponentFactory factory = new ComponentFactory(config);
+            logger.debug("Создана фабрика компонентов");
 
-                AbstractTalker talker = factory.createTalker();
-                logger.info("Создан talker: {}", talker.getClass().getSimpleName());
+            AbstractTalker talker = factory.createTalker();
+            logger.info("Создан talker: {}", talker.getClass().getSimpleName());
 
-                return new DefaultApplicationRunner(talker);
-            } catch (Exception e) {
-                logger.error("Ошибка при создании ApplicationRunner", e);
-                throw e;
-            }
-        };
+            return new DefaultApplicationRunner(talker);
+        } catch (Exception e) {
+            logger.error("Ошибка при создании ApplicationRunner", e);
+            throw e;
+        }
     }
 
     private void logArgs(String[] args) {
