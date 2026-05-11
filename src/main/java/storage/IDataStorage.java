@@ -30,6 +30,10 @@ public interface IDataStorage {
 
     List<Meeting> getMeetingsWithClient(final Client client);
 
+    boolean deleteMeeting(UUID meetingId);
+
+    boolean updateMeeting(Meeting updatedMeeting);
+
     boolean isExistAutomation(UUID uuid);
 
     IAutomaton getAutomation(UUID uuid);

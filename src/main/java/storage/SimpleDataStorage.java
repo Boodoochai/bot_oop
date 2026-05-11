@@ -113,6 +113,46 @@ final public class SimpleDataStorage implements IDataStorage {
     }
 
     @Override
+    public boolean deleteMeeting(UUID meetingId) {
+        if (meetingId == null) {
+            logger.warn("Попытка удалить встречу с null UUID");
+            return false;
+        }
+
+        Iterator<Meeting> it = meetings.iterator();
+        while (it.hasNext()) {
+            Meeting meeting = it.next();
+            if (meeting.uuid().equals(meetingId)) {
+                it.remove();
+                logger.info("Встреча {} удалена", meetingId);
+                return true;
+            }
+        }
+
+        logger.debug("Встреча {} не найдена для удаления", meetingId);
+        return false;
+    }
+
+    @Override
+    public boolean updateMeeting(Meeting updatedMeeting) {
+        if (updatedMeeting == null) {
+            logger.warn("Попытка обновить null встречу");
+            return false;
+        }
+
+        for (int i = 0; i < meetings.size(); i++) {
+            if (meetings.get(i).uuid().equals(updatedMeeting.uuid())) {
+                meetings.set(i, updatedMeeting);
+                logger.info("Встреча {} обновлена", updatedMeeting.uuid());
+                return true;
+            }
+        }
+
+        logger.debug("Встреча {} не найдена для обновления", updatedMeeting.uuid());
+        return false;
+    }
+
+    @Override
     public boolean isExistAutomation(UUID uuid) {
         boolean exists = automatons.containsKey(clientById(uuid));
         logger.debug("Проверка существования автомата для клиента {}: {}", uuid, exists);
